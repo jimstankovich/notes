@@ -1,7 +1,8 @@
 ---
 title: "Bang Pho"
 date: last-modified
-date-format: "D MMMM, YYYY"
+date-format: "D MMMM YYYY"
+published-title: "this page last updated"
 ---
 
 Bang Pho is the name of an intersection and a train station near where I live. According to the dictionary [here](http://sealang.net/thai/):

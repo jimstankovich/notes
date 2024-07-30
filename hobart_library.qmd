@@ -2,7 +2,8 @@
 title: "Missing Hobart Library"
 subtitle: "Places to sit and work in Bangkok"
 date: last-modified
-date-format: "D MMMM, YYYY"
+date-format: "D MMMM YYYY"
+published-title: "this page last updated"
 ---
 
 

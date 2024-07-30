@@ -7,6 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="">
+<meta name="dcterms.date" content="2024-07-30">
 
 <title>Bang Pho Posts - Data analysis using R: an introduction</title>
 <style>
@@ -111,6 +112,35 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <link href="site_libs/plotly-htmlwidgets-css-2.11.1/plotly-htmlwidgets.css" rel="stylesheet">
 <script src="site_libs/plotly-main-2.11.1/plotly-latest.min.js"></script>
 
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
 
 <link rel="stylesheet" href="styles.css">
 </head>
@@ -161,41 +191,50 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#sec-about" id="toc-sec-about" class="nav-link active" data-scroll-target="#sec-about"><span class="header-section-number">1</span> About these notes</a></li>
-  <li><a href="#introduction-to-r-and-rstudio" id="toc-introduction-to-r-and-rstudio" class="nav-link" data-scroll-target="#introduction-to-r-and-rstudio"><span class="header-section-number">2</span> Introduction to R and RStudio</a>
+  <li><a href="#sec-about" id="toc-sec-about" class="nav-link active" data-scroll-target="#sec-about"><span class="header-section-number">1</span> About these notes</a>
+  <ul class="collapse">
+  <li><a href="#sec-sources" id="toc-sec-sources" class="nav-link" data-scroll-target="#sec-sources"><span class="header-section-number">1.1</span> Sources</a></li>
+  <li><a href="#how-to-use-these-notes" id="toc-how-to-use-these-notes" class="nav-link" data-scroll-target="#how-to-use-these-notes"><span class="header-section-number">1.2</span> How to use these notes</a></li>
+  </ul></li>
+  <li><a href="#sec-intro-R-RStudio" id="toc-sec-intro-R-RStudio" class="nav-link" data-scroll-target="#sec-intro-R-RStudio"><span class="header-section-number">2</span> Introduction to R and RStudio</a>
   <ul class="collapse">
   <li><a href="#why-use-r-and-rstudio" id="toc-why-use-r-and-rstudio" class="nav-link" data-scroll-target="#why-use-r-and-rstudio"><span class="header-section-number">2.1</span> Why use R and RStudio?</a></li>
-  <li><a href="#overview" id="toc-overview" class="nav-link" data-scroll-target="#overview"><span class="header-section-number">2.2</span> Overview</a></li>
-  <li><a href="#workflow-within-rstudio" id="toc-workflow-within-rstudio" class="nav-link" data-scroll-target="#workflow-within-rstudio"><span class="header-section-number">2.3</span> Workflow within RStudio</a></li>
-  <li><a href="#introduction-to-r" id="toc-introduction-to-r" class="nav-link" data-scroll-target="#introduction-to-r"><span class="header-section-number">2.4</span> Introduction to R</a></li>
-  <li><a href="#using-r-as-a-calculator" id="toc-using-r-as-a-calculator" class="nav-link" data-scroll-target="#using-r-as-a-calculator"><span class="header-section-number">2.5</span> Using R as a calculator</a></li>
-  <li><a href="#functions" id="toc-functions" class="nav-link" data-scroll-target="#functions"><span class="header-section-number">2.6</span> Functions</a></li>
-  <li><a href="#objects-giving-names-to-pieces-of-information" id="toc-objects-giving-names-to-pieces-of-information" class="nav-link" data-scroll-target="#objects-giving-names-to-pieces-of-information"><span class="header-section-number">2.7</span> Objects: giving names to pieces of information</a></li>
-  <li><a href="#vectors" id="toc-vectors" class="nav-link" data-scroll-target="#vectors"><span class="header-section-number">2.8</span> Vectors</a></li>
-  <li><a href="#joining-vectors-of-the-same-length-to-make-a-data.frame" id="toc-joining-vectors-of-the-same-length-to-make-a-data.frame" class="nav-link" data-scroll-target="#joining-vectors-of-the-same-length-to-make-a-data.frame"><span class="header-section-number">2.9</span> Joining vectors of the same length to make a <code>data.frame</code></a></li>
-  <li><a href="#checking-whether-statements-are-true-or-false" id="toc-checking-whether-statements-are-true-or-false" class="nav-link" data-scroll-target="#checking-whether-statements-are-true-or-false"><span class="header-section-number">2.10</span> Checking whether statements are TRUE or FALSE</a></li>
-  <li><a href="#sec-packages" id="toc-sec-packages" class="nav-link" data-scroll-target="#sec-packages"><span class="header-section-number">2.11</span> R packages</a></li>
+  <li><a href="#a-comparison-of-r-and-some-other-software" id="toc-a-comparison-of-r-and-some-other-software" class="nav-link" data-scroll-target="#a-comparison-of-r-and-some-other-software"><span class="header-section-number">2.2</span> A comparison of R and some other software</a></li>
+  <li><a href="#overview" id="toc-overview" class="nav-link" data-scroll-target="#overview"><span class="header-section-number">2.3</span> Overview</a></li>
+  <li><a href="#workflow-within-rstudio" id="toc-workflow-within-rstudio" class="nav-link" data-scroll-target="#workflow-within-rstudio"><span class="header-section-number">2.4</span> Workflow within RStudio</a></li>
+  <li><a href="#introduction-to-r" id="toc-introduction-to-r" class="nav-link" data-scroll-target="#introduction-to-r"><span class="header-section-number">2.5</span> Introduction to R</a></li>
+  <li><a href="#using-r-as-a-calculator" id="toc-using-r-as-a-calculator" class="nav-link" data-scroll-target="#using-r-as-a-calculator"><span class="header-section-number">2.6</span> Using R as a calculator</a></li>
+  <li><a href="#functions" id="toc-functions" class="nav-link" data-scroll-target="#functions"><span class="header-section-number">2.7</span> Functions</a></li>
+  <li><a href="#sec-object" id="toc-sec-object" class="nav-link" data-scroll-target="#sec-object"><span class="header-section-number">2.8</span> Objects: giving names to pieces of information</a></li>
+  <li><a href="#vectors" id="toc-vectors" class="nav-link" data-scroll-target="#vectors"><span class="header-section-number">2.9</span> Vectors</a></li>
+  <li><a href="#joining-vectors-of-the-same-length-to-make-a-data.frame" id="toc-joining-vectors-of-the-same-length-to-make-a-data.frame" class="nav-link" data-scroll-target="#joining-vectors-of-the-same-length-to-make-a-data.frame"><span class="header-section-number">2.10</span> Joining vectors of the same length to make a <code>data.frame</code></a></li>
+  <li><a href="#checking-whether-statements-are-true-or-false" id="toc-checking-whether-statements-are-true-or-false" class="nav-link" data-scroll-target="#checking-whether-statements-are-true-or-false"><span class="header-section-number">2.11</span> Checking whether statements are TRUE or FALSE</a></li>
+  <li><a href="#sec-packages" id="toc-sec-packages" class="nav-link" data-scroll-target="#sec-packages"><span class="header-section-number">2.12</span> R packages</a></li>
   </ul></li>
   <li><a href="#working-with-data" id="toc-working-with-data" class="nav-link" data-scroll-target="#working-with-data"><span class="header-section-number">3</span> Working with data</a>
   <ul class="collapse">
-  <li><a href="#loading-data-with-the-readr-package" id="toc-loading-data-with-the-readr-package" class="nav-link" data-scroll-target="#loading-data-with-the-readr-package"><span class="header-section-number">3.1</span> Loading data with the <code>readr</code> package</a>
+  <li><a href="#sec-loading-data" id="toc-sec-loading-data" class="nav-link" data-scroll-target="#sec-loading-data"><span class="header-section-number">3.1</span> Loading data with the <code>readr</code> package</a>
   <ul class="collapse">
   <li><a href="#method-1-download-the-data-onto-your-computer-then-load-it-from-your-computer-into-r" id="toc-method-1-download-the-data-onto-your-computer-then-load-it-from-your-computer-into-r" class="nav-link" data-scroll-target="#method-1-download-the-data-onto-your-computer-then-load-it-from-your-computer-into-r"><span class="header-section-number">3.1.1</span> Method 1: Download the data onto your computer, then load it from your computer into R</a></li>
   <li><a href="#method-2-download-the-data-directly-into-r-from-the-internet" id="toc-method-2-download-the-data-directly-into-r-from-the-internet" class="nav-link" data-scroll-target="#method-2-download-the-data-directly-into-r-from-the-internet"><span class="header-section-number">3.1.2</span> Method 2: Download the data directly into R from the internet</a></li>
   </ul></li>
-  <li><a href="#using-the-dplyr-package-to-look-at-the-asean_data" id="toc-using-the-dplyr-package-to-look-at-the-asean_data" class="nav-link" data-scroll-target="#using-the-dplyr-package-to-look-at-the-asean_data"><span class="header-section-number">3.2</span> Using the <code>dplyr</code> package to look at the <code>asean_data</code></a>
+  <li><a href="#sec-dplyr" id="toc-sec-dplyr" class="nav-link" data-scroll-target="#sec-dplyr"><span class="header-section-number">3.2</span> Using the <code>dplyr</code> package to look at the <code>asean_data</code></a>
   <ul class="collapse">
   <li><a href="#calculate-the-total-population-of-the-asean-countries" id="toc-calculate-the-total-population-of-the-asean-countries" class="nav-link" data-scroll-target="#calculate-the-total-population-of-the-asean-countries"><span class="header-section-number">3.2.1</span> Calculate the total population of the ASEAN countries</a></li>
   <li><a href="#calculate-average-gdp-per-person" id="toc-calculate-average-gdp-per-person" class="nav-link" data-scroll-target="#calculate-average-gdp-per-person"><span class="header-section-number">3.2.2</span> Calculate average GDP per person</a></li>
-  <li><a href="#calculate-average-life-expectancy" id="toc-calculate-average-life-expectancy" class="nav-link" data-scroll-target="#calculate-average-life-expectancy"><span class="header-section-number">3.2.3</span> Calculate average life expectancy</a></li>
-  <li><a href="#list-of-dplyr-functions-we-have-used" id="toc-list-of-dplyr-functions-we-have-used" class="nav-link" data-scroll-target="#list-of-dplyr-functions-we-have-used"><span class="header-section-number">3.2.4</span> List of <code>dplyr</code> functions we have used</a></li>
+  <li><a href="#list-of-dplyr-functions-we-have-used" id="toc-list-of-dplyr-functions-we-have-used" class="nav-link" data-scroll-target="#list-of-dplyr-functions-we-have-used"><span class="header-section-number">3.2.3</span> List of <code>dplyr</code> functions we have used</a></li>
   </ul></li>
-  <li><a href="#plotting-data-with-the-ggplot2-package" id="toc-plotting-data-with-the-ggplot2-package" class="nav-link" data-scroll-target="#plotting-data-with-the-ggplot2-package"><span class="header-section-number">3.3</span> Plotting data with the <code>ggplot2</code> package</a>
+  <li><a href="#sec-plotting" id="toc-sec-plotting" class="nav-link" data-scroll-target="#sec-plotting"><span class="header-section-number">3.3</span> Plotting data with the <code>ggplot2</code> package</a>
   <ul class="collapse">
-  <li><a href="#bar-graphs" id="toc-bar-graphs" class="nav-link" data-scroll-target="#bar-graphs"><span class="header-section-number">3.3.1</span> Bar graphs</a></li>
-  <li><a href="#line-graphs-showing-changes-in-a-variable-over-time" id="toc-line-graphs-showing-changes-in-a-variable-over-time" class="nav-link" data-scroll-target="#line-graphs-showing-changes-in-a-variable-over-time"><span class="header-section-number">3.3.2</span> Line graphs showing changes in a variable over time</a></li>
+  <li><a href="#bar-graphs-and-paired-t-tests" id="toc-bar-graphs-and-paired-t-tests" class="nav-link" data-scroll-target="#bar-graphs-and-paired-t-tests"><span class="header-section-number">3.3.1</span> Bar graphs (and paired t-tests)</a></li>
+  <li><a href="#sec-line-graphs" id="toc-sec-line-graphs" class="nav-link" data-scroll-target="#sec-line-graphs"><span class="header-section-number">3.3.2</span> Line graphs showing changes in a variable over time</a></li>
   <li><a href="#scatterplot-of-2-continuous-variables-against-each-other" id="toc-scatterplot-of-2-continuous-variables-against-each-other" class="nav-link" data-scroll-target="#scatterplot-of-2-continuous-variables-against-each-other"><span class="header-section-number">3.3.3</span> Scatterplot of 2 continuous variables against each other</a></li>
   <li><a href="#bubble-charts" id="toc-bubble-charts" class="nav-link" data-scroll-target="#bubble-charts"><span class="header-section-number">3.3.4</span> Bubble charts</a></li>
+  </ul></li>
+  <li><a href="#sec-stats" id="toc-sec-stats" class="nav-link" data-scroll-target="#sec-stats"><span class="header-section-number">3.4</span> Some more statistical tests with the big Gapminder dataset</a>
+  <ul class="collapse">
+  <li><a href="#unpaired-t-test" id="toc-unpaired-t-test" class="nav-link" data-scroll-target="#unpaired-t-test"><span class="header-section-number">3.4.1</span> Unpaired t-test</a></li>
+  <li><a href="#chi-square-test" id="toc-chi-square-test" class="nav-link" data-scroll-target="#chi-square-test"><span class="header-section-number">3.4.2</span> Chi-square test</a></li>
   </ul></li>
   </ul></li>
   <li><a href="#further-reading" id="toc-further-reading" class="nav-link" data-scroll-target="#further-reading"><span class="header-section-number">4</span> Further reading</a></li>
@@ -216,9 +255,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
     
     <div>
-    <div class="quarto-title-meta-heading">Published</div>
+    <div class="quarto-title-meta-heading">this page last updated</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">8 July, 2024</p>
+      <p class="date">30 July 2024</p>
     </div>
   </div>
   
@@ -230,33 +269,48 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </header>
 
 
-<p>Things to add, as discussed in the meeting on 30 June</p>
-<ul>
-<li><p>Some basic stats analyses, e.g.&nbsp;a chi-square test and t-test.</p></li>
-<li><p>A basic description of what R is used for, and of what other things are better for (doing algebra, plotting graphs). Matlab, Desmos.</p></li>
-<li><p>Explain the use of quotes for text.</p></li>
-<li><p>Change the focus a bit… the workshop isn’t just for social scientists.</p></li>
-<li><p>Talk about datasets that come with R packages.</p></li>
-</ul>
 <section id="sec-about" class="level1" data-number="1">
 <h1 data-number="1"><span class="header-section-number">1</span> About these notes</h1>
 <p>R is a programming language used by many researchers to analyse data. The aims of these notes are:</p>
 <ul>
 <li>to give you an understanding of how R works,</li>
-<li>to help you appreciate why people find R useful for managing and analysing data, and</li>
+<li>to help you appreciate why people find R useful for managing, analysing and plotting data, and</li>
 <li>to encourage you to use R for your research.</li>
 </ul>
-<p>In these notes we look at some data on countries around the world based on free material from <a href="https://www.gapminder.org/data/">GAPMINDER.ORG</a>, CC-BY LICENSE. Hans Rosling, the co-founder of Gapminder, has given some extremely impressive presentations using Gapminder data, for example <a href="https://www.ted.com/talks/hans_rosling_the_best_stats_you_ve_ever_seen?language=en">here</a> and <a href="https://www.youtube.com/watch?v=jbkSRLYSojo">here</a>.</p>
-<p>Some parts of these notes have been taken from parts of a longer course called <a href="https://swcarpentry.github.io/r-novice-gapminder/">R for Reproducible Scientific Analysis</a>, and I have made some modifications. The course <em>R for Reproducible Scientific Analysis</em> is Copyright (c) <a href="https://carpentries.org/">The Carpentries</a>. Here is the <a href="https://creativecommons.org/licenses/by/4.0/">license</a> governing the use of the course.</p>
+<p>These notes focus on the the use of R to manage and plot data. They not teach any statistics, though they include examples showing how to do t-tests and chi-square tests.</p>
+<section id="sec-sources" class="level2" data-number="1.1">
+<h2 data-number="1.1" class="anchored" data-anchor-id="sec-sources"><span class="header-section-number">1.1</span> Sources</h2>
+<p>These notes use data on countries around the world based on free material from <a href="https://www.gapminder.org/data/">GAPMINDER.ORG</a>, CC-BY LICENSE. Hans Rosling, the co-founder of Gapminder, has given some extremely impressive presentations using Gapminder data, for example <a href="https://www.ted.com/talks/hans_rosling_the_best_stats_you_ve_ever_seen?language=en">here</a> and <a href="https://www.youtube.com/watch?v=jbkSRLYSojo">here</a>.</p>
+<p>Some parts of these notes are taken directly from a longer course called <a href="https://swcarpentry.github.io/r-novice-gapminder/">R for Reproducible Scientific Analysis</a>, and I have made some modifications. The course <em>R for Reproducible Scientific Analysis</em> is Copyright (c) <a href="https://carpentries.org/">The Carpentries</a>. Here is the <a href="https://creativecommons.org/licenses/by/4.0/">license</a> governing the use of the course.</p>
 <p>Half-way through writing these notes, I discovered an excellent online book, <a href="https://bookdown.org/daniel_dauber_io/r4np_book/">R for Non-Programmers: A Guide for Social Scientists</a> by Daniel Dauber (2024). If I had found this book sooner, I would have included many more good ideas from it.</p>
+</section>
+<section id="how-to-use-these-notes" class="level2" data-number="1.2">
+<h2 data-number="1.2" class="anchored" data-anchor-id="how-to-use-these-notes"><span class="header-section-number">1.2</span> How to use these notes</h2>
 <p>To work through the exercises in these notes, you need two pieces of software installed on your computer:</p>
 <ol type="1">
 <li><span style="color: #D95F02;"><strong>R</strong></span>, available <a href="https://cran.rstudio.com/">here</a>.</li>
 <li><span style="color: #D95F02;"><strong>RStudio</strong></span>, available <a href="https://posit.co/download/rstudio-desktop/#download">here</a>.</li>
 </ol>
-<p>Please make sure that you have the latest versions of these installed. If you have any problems installing these, take a look at the instructions in Chapter 3 of <a href="https://bookdown.org/daniel_dauber_io/r4np_book/setting-up-r-and-rstudio.html">R for Non-Programmers</a>.</p>
+<p>Please make sure you have the latest versions installed. If you have any problems installing them, take a look at the instructions in Chapter 3 of <a href="https://bookdown.org/daniel_dauber_io/r4np_book/setting-up-r-and-rstudio.html">R for Non-Programmers</a>.</p>
+<p>There is probably too much here to work through in 3 hours. If you are not very familiar with R, I’d recommend working though the following sections in order:</p>
+<ul>
+<li><a href="#sec-intro-R-RStudio" class="quarto-xref">Section&nbsp;2</a>: Introduction to R (work through Sections 2.3 to 2.12; come back and read Sections 2.1 and 2.2 later if you prefer)</li>
+<li><a href="#sec-loading-data" class="quarto-xref">Section&nbsp;3.1</a>: Loading data with the <code>readr</code> package</li>
+<li><a href="#sec-dplyr" class="quarto-xref">Section&nbsp;3.2</a>: Using the <code>dplyr</code> package to look at the <code>asean_data</code></li>
+</ul>
+<p>After that, if you have time, you can continue with</p>
+<ul>
+<li><a href="#sec-plotting" class="quarto-xref">Section&nbsp;3.3</a>: Plotting data with the <code>ggplot2</code> package</li>
+</ul>
+<p>or you can jump to</p>
+<ul>
+<li><a href="#sec-stats" class="quarto-xref">Section&nbsp;3.4</a>: Some more statistical tests with the big Gapminder dataset</li>
+</ul>
+<p>If you have your own data in a CSV file, try loading it as in <a href="#sec-loading-data" class="quarto-xref">Section&nbsp;3.1</a>.</p>
+<p>Please take your time: try making some changes to the R commands here, and see what happens.</p>
 </section>
-<section id="introduction-to-r-and-rstudio" class="level1" data-number="2">
+</section>
+<section id="sec-intro-R-RStudio" class="level1" data-number="2">
 <h1 data-number="2"><span class="header-section-number">2</span> Introduction to R and RStudio</h1>
 <section id="why-use-r-and-rstudio" class="level2" data-number="2.1">
 <h2 data-number="2.1" class="anchored" data-anchor-id="why-use-r-and-rstudio"><span class="header-section-number">2.1</span> Why use R and RStudio?</h2>
@@ -265,9 +319,18 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p>Therefore, these notes will help you begin exploring your data using R and RStudio. The R program is available for Windows, Mac, and Linux operating systems, and is a freely-available where you downloaded it above. To run R, all you need is the R program.</p>
 <p>However, to make using R easier, we will use the program RStudio, which we also downloaded above. RStudio is a free, open-source, Integrated Development Environment (IDE). It provides a built-in editor, works on all platforms (including on servers) and provides many advantages such as integration with version control and project management.</p>
 </section>
-<section id="overview" class="level2" data-number="2.2">
-<h2 data-number="2.2" class="anchored" data-anchor-id="overview"><span class="header-section-number">2.2</span> Overview</h2>
-<p>We will begin with raw data, perform exploratory analyses, and learn how to plot results graphically. This example starts with data from gapminder.org, containing yearly statistics for many countries through time. Can you read the data into R? Can you plot the population for Indonesia? Can you calculate the average income for ASEAN countries? By the end of these lessons you will be able to do things like plot the populations for all of these countries in under a minute!</p>
+<section id="a-comparison-of-r-and-some-other-software" class="level2" data-number="2.2">
+<h2 data-number="2.2" class="anchored" data-anchor-id="a-comparison-of-r-and-some-other-software"><span class="header-section-number">2.2</span> A comparison of R and some other software</h2>
+<p>R was originally developed by statisticians, and many people use it for statistics: things like regression, hypothesis testing and calculating confidence intervals. There are various pieces of commercial statistical software that do these things, such as SPSS, Stata and SAS. Unlike these, R is free, open-source software. Thousands of people contribute to R by writing <span style="color: #D95F02;"><strong>packages</strong></span> (<a href="#sec-packages" class="quarto-xref">Section&nbsp;2.12</a>), and these packages do a wide range of useful things. In particular, they make it easier to organise, manage and tidy data, and to plot data. In some jobs I have used R to do these things without doing any statistics, and I think it does them better than other statistical software. Even if you are planning to do lots of statistical analyses, data is often messy, and it takes more time to organise and clean data than to analyse it. So don’t underestimate the value of a system like R that is good for this!</p>
+<p>Lots of people say that R takes <em>time</em> to learn: it will take you longer to work out how to do a t-test in R than in SPSS. In this <em>Nature</em> <a href="https://www.nature.com/articles/517109a">article</a> from 2014, ecologist Megan Jennings says it is worth spending the time learning R:</p>
+<blockquote class="blockquote">
+<p>“Make that time. Set it aside as an investment: for saving time later, and for building skills that can be used across multiple problems we face as scientists.”</p>
+</blockquote>
+<p>R is <em>not</em> designed for doing algebra and solving equations, or for plotting graphs. Other tools are better for these things, such as the commercial software Matlab and Mathematica and the free website <a href="https://www.desmos.com/calculator">Desmos</a>.</p>
+</section>
+<section id="overview" class="level2" data-number="2.3">
+<h2 data-number="2.3" class="anchored" data-anchor-id="overview"><span class="header-section-number">2.3</span> Overview</h2>
+<p>We will begin with raw data, perform exploratory analyses, and learn how to plot results graphically. This example starts with data from gapminder.org, containing yearly statistics for many countries through time. Can you read the data into R? Can you calculate the total population of ASEAN countries? Can you plot life expectancy for various countries? By the end of these lessons you will be able to do things like these in under a minute!</p>
 <p><strong>Basic layout</strong></p>
 <p>When you first open RStudio, you will see three panels:</p>
 <ul>
@@ -292,8 +355,8 @@ R Scripts
 </div>
 </div>
 </section>
-<section id="workflow-within-rstudio" class="level2" data-number="2.3">
-<h2 data-number="2.3" class="anchored" data-anchor-id="workflow-within-rstudio"><span class="header-section-number">2.3</span> Workflow within RStudio</h2>
+<section id="workflow-within-rstudio" class="level2" data-number="2.4">
+<h2 data-number="2.4" class="anchored" data-anchor-id="workflow-within-rstudio"><span class="header-section-number">2.4</span> Workflow within RStudio</h2>
 <p>There are two main ways you can work in RStudio:</p>
 <ol type="1">
 <li><p>Test and play within the interactive R console then copy code into a .R file to run later.</p>
@@ -325,13 +388,13 @@ Tip: Running Segments of Your Code
 </div>
 </div>
 </section>
-<section id="introduction-to-r" class="level2" data-number="2.4">
-<h2 data-number="2.4" class="anchored" data-anchor-id="introduction-to-r"><span class="header-section-number">2.4</span> Introduction to R</h2>
+<section id="introduction-to-r" class="level2" data-number="2.5">
+<h2 data-number="2.5" class="anchored" data-anchor-id="introduction-to-r"><span class="header-section-number">2.5</span> Introduction to R</h2>
 <p>Much of your time in R will be spent in the R interactive console. This is where you will run all of your code, and can be a useful environment to try out ideas before adding them to an R script file.</p>
 <p>The first thing you will see in the R interactive session is a bunch of information, followed by a “&gt;” and a blinking cursor. Here you type in commands, R tries to execute them, and then returns a result.</p>
 </section>
-<section id="using-r-as-a-calculator" class="level2" data-number="2.5">
-<h2 data-number="2.5" class="anchored" data-anchor-id="using-r-as-a-calculator"><span class="header-section-number">2.5</span> Using R as a calculator</h2>
+<section id="using-r-as-a-calculator" class="level2" data-number="2.6">
+<h2 data-number="2.6" class="anchored" data-anchor-id="using-r-as-a-calculator"><span class="header-section-number">2.6</span> Using R as a calculator</h2>
 <p>This is the simplest thing you can do with R.</p>
 <p>If you type</p>
 <p><code>1 + 100</code></p>
@@ -387,8 +450,8 @@ Tip: Running Segments of Your Code
 </div>
 </div>
 </section>
-<section id="functions" class="level2" data-number="2.6">
-<h2 data-number="2.6" class="anchored" data-anchor-id="functions"><span class="header-section-number">2.6</span> Functions</h2>
+<section id="functions" class="level2" data-number="2.7">
+<h2 data-number="2.7" class="anchored" data-anchor-id="functions"><span class="header-section-number">2.7</span> Functions</h2>
 <p>R can also do other things you can do with a calculator. For example, to calculate the square-root of 36, type</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sqrt</span>(<span class="dv">36</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -418,13 +481,13 @@ Tip: Running Segments of Your Code
 <pre class="output"><code>[1] "1 dog and 12 cats"</code></pre>
 </div>
 </div>
-<p>This example shows that R works with text as well as numbers.</p>
+<p>This example shows that R works with text as well as numbers. The quotation marks <code>"</code> are used to show that the thing inside is text, not something else like a number, a function, or an object (<a href="#sec-object" class="quarto-xref">Section&nbsp;2.8</a>).</p>
 <p>Don’t worry about trying to remember every function in R. You can look them up on Google, or if you can remember the start of the function’s name, type it and RStudio will provide some suggestions for the end of the name. For example, if you type <code>sq</code>, RStudio will list various functions starting with “sq”, including <code>sqrt()</code>.</p>
 <p>Typing a ? before the name of a command will open the <em>help page</em> for the command on the bottom right. The help page includes a detailed description of the command and how it works. The bottom of the help page will usually has examples of how to use the command. (This is often the most useful part of the help page!)</p>
 </section>
-<section id="objects-giving-names-to-pieces-of-information" class="level2" data-number="2.7">
-<h2 data-number="2.7" class="anchored" data-anchor-id="objects-giving-names-to-pieces-of-information"><span class="header-section-number">2.7</span> Objects: giving names to pieces of information</h2>
-<p>A key concept in R, and in any programming language, is to give names to pieces of data. You can give names to single numbers, a bit like <code>x</code>’s and <code>y</code>’s in algebra you did in high school, or to huge tables of data. Any name (like <code>x</code> or <code>y</code>) with something assigned to it is called an <code>r(em2("object"))</code>.</p>
+<section id="sec-object" class="level2" data-number="2.8">
+<h2 data-number="2.8" class="anchored" data-anchor-id="sec-object"><span class="header-section-number">2.8</span> Objects: giving names to pieces of information</h2>
+<p>A key concept in R, and in any programming language, is to give names to pieces of data. You can give names to single numbers, a bit like <code>x</code>’s and <code>y</code>’s in algebra you did in high school, or to huge tables of data. Any name (like <code>x</code> or <code>y</code>) with something assigned to it is called an <span style="color: #D95F02;"><strong>object</strong></span>.</p>
 <p>The <code>-&gt;</code> symbol is used to assign some data to an object. For example, the command</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>x <span class="ot">&lt;-</span> <span class="dv">9</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -544,8 +607,8 @@ Click to see the solution
 </div>
 <p>Objects can also store more than one piece of information, not just a single number or a single piece of text. Two of the most important types of objects in R with multiple pieces of information are <span style="color: #D95F02;"><strong>vectors</strong></span> and <span style="color: #D95F02;"><strong>data.frames</strong></span>.</p>
 </section>
-<section id="vectors" class="level2" data-number="2.8">
-<h2 data-number="2.8" class="anchored" data-anchor-id="vectors"><span class="header-section-number">2.8</span> Vectors</h2>
+<section id="vectors" class="level2" data-number="2.9">
+<h2 data-number="2.9" class="anchored" data-anchor-id="vectors"><span class="header-section-number">2.9</span> Vectors</h2>
 <p>A <span style="color: #D95F02;"><strong>vector</strong></span> is an object containing a list of things, where everything in list has the same basic data type. For example, everything in the vector can be a piece of text, or everything can be a number.</p>
 <p>We can create vectors by using the R function <code>c()</code>, which “combines” or “concatenates” pieces of information. For example, here is a command to create a vector with 10 pieces of information: the names of the 10 ASEAN countries</p>
 <div class="cell">
@@ -623,8 +686,8 @@ Click to see the solution
 </div>
 </div>
 </section>
-<section id="joining-vectors-of-the-same-length-to-make-a-data.frame" class="level2" data-number="2.9">
-<h2 data-number="2.9" class="anchored" data-anchor-id="joining-vectors-of-the-same-length-to-make-a-data.frame"><span class="header-section-number">2.9</span> Joining vectors of the same length to make a <code>data.frame</code></h2>
+<section id="joining-vectors-of-the-same-length-to-make-a-data.frame" class="level2" data-number="2.10">
+<h2 data-number="2.10" class="anchored" data-anchor-id="joining-vectors-of-the-same-length-to-make-a-data.frame"><span class="header-section-number">2.10</span> Joining vectors of the same length to make a <code>data.frame</code></h2>
 <p>If we have 2 or more vectors of the same length, we can join them to make a table of data with multiple columns, one vector in each column, like something you might enter into a spreadsheet. In R, a table of data is called a <span style="color: #D95F02;"><strong>data.frame</strong></span>. To make a <code>data.frame</code>, lets combine our vector <code>ASEAN_countries</code> with a vector of <a href="https://aseanzone.wordpress.com/cultural/136-2/">national dishes</a>:</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb65"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb65-1"><a href="#cb65-1" aria-hidden="true" tabindex="-1"></a>national_dish <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"ambuyat"</span>, <span class="st">"amok"</span>, <span class="st">"gado-gado"</span>, <span class="st">"chicken soup"</span>, <span class="st">"lahpet"</span>, <span class="st">"nasi lemak"</span>, <span class="st">"adobo"</span>, <span class="st">"laksa"</span>, <span class="st">"tom yum goong"</span>, <span class="st">"nem"</span>)</span>
@@ -701,8 +764,8 @@ Click to see the solution
 </div>
 </div>
 </section>
-<section id="checking-whether-statements-are-true-or-false" class="level2" data-number="2.10">
-<h2 data-number="2.10" class="anchored" data-anchor-id="checking-whether-statements-are-true-or-false"><span class="header-section-number">2.10</span> Checking whether statements are TRUE or FALSE</h2>
+<section id="checking-whether-statements-are-true-or-false" class="level2" data-number="2.11">
+<h2 data-number="2.11" class="anchored" data-anchor-id="checking-whether-statements-are-true-or-false"><span class="header-section-number">2.11</span> Checking whether statements are TRUE or FALSE</h2>
 <p>R can check whether particular statements are TRUE or FALSE. This is very useful for selecting rows of large data.frames meeting particular conditions.</p>
 <p>For example, we can check whether</p>
 <div class="cell">
@@ -804,8 +867,8 @@ Click to see the solution
 </div>
 </div>
 </section>
-<section id="sec-packages" class="level2" data-number="2.11">
-<h2 data-number="2.11" class="anchored" data-anchor-id="sec-packages"><span class="header-section-number">2.11</span> R packages</h2>
+<section id="sec-packages" class="level2" data-number="2.12">
+<h2 data-number="2.12" class="anchored" data-anchor-id="sec-packages"><span class="header-section-number">2.12</span> R packages</h2>
 <p>It is possible to add functions to R by writing a <span style="color: #D95F02;"><strong>package</strong></span>, or by obtaining a package written by someone else. Packages are sometimes also called <span style="color: #D95F02;"><strong>libraries</strong></span>. There are over 10,000 packages in a public collection called CRAN (the comprehensive R archive network). R and RStudio have functionality for managing packages:</p>
 <ul>
 <li>You can see what packages are installed by typing <code>installed.packages()</code></li>
@@ -857,12 +920,18 @@ Click to see the solution
 </div>
 </div>
 </div>
+<p>As well as adding functions to R, many packages include interesting datasets to play with. For example:</p>
+<ul>
+<li><p>The package <a href="https://CRAN.R-project.org/package=nycflights13">nycflights</a> includes data for all flights that departed from New York City in 2013.</p></li>
+<li><p>The package <a href="https://CRAN.R-project.org/package=gapminder">gapminder</a> includes an older version of the Gapminder data that we use in these notes (up to 2007).</p></li>
+<li><p>The book <a href="https://bookdown.org/daniel_dauber_io/r4np_book/">R for Non-Programmers</a> has a companion package <code>r4np</code> with all the datasets used in the book. This package is not yet available in CRAN, so you need to follow slightly different instructions to install it. The instructions are included in the book <a href="https://bookdown.org/daniel_dauber_io/r4np_book/r-basics-the-very-fundamentals.html#installing-packages-using-a-function">here</a>.</p></li>
+</ul>
 </section>
 </section>
 <section id="working-with-data" class="level1" data-number="3">
 <h1 data-number="3"><span class="header-section-number">3</span> Working with data</h1>
-<section id="loading-data-with-the-readr-package" class="level2" data-number="3.1">
-<h2 data-number="3.1" class="anchored" data-anchor-id="loading-data-with-the-readr-package"><span class="header-section-number">3.1</span> Loading data with the <code>readr</code> package</h2>
+<section id="sec-loading-data" class="level2" data-number="3.1">
+<h2 data-number="3.1" class="anchored" data-anchor-id="sec-loading-data"><span class="header-section-number">3.1</span> Loading data with the <code>readr</code> package</h2>
 <p>Let’s load a small CSV file with some Gapminder data for 10 ASEAN countries. We will use the package <code>readr</code> to do this.</p>
 <p>I have put the CSV file on a webpage <a href="https://github.com/jimstankovich/notes/blob/main/data/asean_data.csv">here</a>.</p>
 <p>There are two ways you can load the data into R. You can either download it onto your computer first (Method 1), or you can load it into R directly from the website (Method 2).</p>
@@ -880,7 +949,7 @@ Click to see the solution
 </ul>
 <p>Let’s look at the 3 commands and what they do:</p>
 <ol type="1">
-<li><p><code>library(readr)</code>: The <code>library()</code> function makes the package <code>readr</code> available for use (as mentioned in <a href="#sec-packages" class="quarto-xref">Section&nbsp;2.11</a> above).</p></li>
+<li><p><code>library(readr)</code>: The <code>library()</code> function makes the package <code>readr</code> available for use (as mentioned in <a href="#sec-packages" class="quarto-xref">Section&nbsp;2.12</a> above).</p></li>
 <li><p><code>asean_data &lt;- read_csv("[path_to_folder]/asean_data.csv")</code>: The function <code>read_csv</code> is part of the <code>readr</code> package. Here it reads the CSV file <code>asean_data.csv</code> into R’s memory and gives it the name <code>asean_data</code>. (We could call it something else if we wanted to.) Some information appears in the Console window about the data. The <code>country</code> column has text information (character or “chr” for short). The other 4 columns (<code>year</code>, <code>pop</code>, <code>lifeExp</code>, <code>gdpPercap</code>) have numerical information (stored as “double-precision” numbers, or “dbl” for short… don’t worry about this computer science terminology if you haven’t heard it before).</p></li>
 </ol>
 <div class="quarto-figure quarto-figure-center">
@@ -932,6 +1001,19 @@ Click to see the solution
 20 Vietnam      2022  98200000    75       11400</code></pre>
 </div>
 </div>
+<div class="callout callout-style-simple callout-caution no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Exercise
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>If you have your own data in a CSV file, trying loading it using the <code>read_csv()</code> command. Then try adapting some of the commands below to apply them to your data.</p>
+</div>
+</div>
 </section>
 <section id="method-2-download-the-data-directly-into-r-from-the-internet" class="level3" data-number="3.1.2">
 <h3 data-number="3.1.2" class="anchored" data-anchor-id="method-2-download-the-data-directly-into-r-from-the-internet"><span class="header-section-number">3.1.2</span> Method 2: Download the data directly into R from the internet</h3>
@@ -943,8 +1025,8 @@ Click to see the solution
 <p>Method 2 is fine for the small dataset we are looking at here. However, if you are running your R commands many times and working with a large dataset, it is better to download the dataset onto your computer first (Method 1), rather than downloading a large dataset many times.</p>
 </section>
 </section>
-<section id="using-the-dplyr-package-to-look-at-the-asean_data" class="level2" data-number="3.2">
-<h2 data-number="3.2" class="anchored" data-anchor-id="using-the-dplyr-package-to-look-at-the-asean_data"><span class="header-section-number">3.2</span> Using the <code>dplyr</code> package to look at the <code>asean_data</code></h2>
+<section id="sec-dplyr" class="level2" data-number="3.2">
+<h2 data-number="3.2" class="anchored" data-anchor-id="sec-dplyr"><span class="header-section-number">3.2</span> Using the <code>dplyr</code> package to look at the <code>asean_data</code></h2>
 <p>I use the <code>dplyr</code> package more than any other packages. It is very useful for managing datasets: cleaning them, joining them, and selecting smaller sections for statistical analysis.</p>
 <p>Let’s look at how a few <code>dplyr</code> functions can be applied to the <code>asean_data</code>.</p>
 <section id="calculate-the-total-population-of-the-asean-countries" class="level3" data-number="3.2.1">
@@ -1056,7 +1138,7 @@ Exercise
 </div>
 </div>
 <div class="callout callout-style-simple callout-note no-icon callout-titled">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-8-contents" aria-controls="callout-8" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-9-contents" aria-controls="callout-9" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon no-icon"></i>
 </div>
@@ -1065,7 +1147,7 @@ Click to see the solution
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-8" class="callout-8-contents callout-collapse collapse">
+<div id="callout-9" class="callout-9-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <div class="cell">
 <div class="sourceCode cell-code" id="cb111"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb111-1"><a href="#cb111-1" aria-hidden="true" tabindex="-1"></a>asean_data <span class="sc">%&gt;%</span></span>
@@ -1095,7 +1177,7 @@ Exercise
 </div>
 </div>
 <div class="callout callout-style-simple callout-note no-icon callout-titled">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-10-contents" aria-controls="callout-10" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-11-contents" aria-controls="callout-11" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon no-icon"></i>
 </div>
@@ -1104,7 +1186,7 @@ Click to see the solution
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-10" class="callout-10-contents callout-collapse collapse">
+<div id="callout-11" class="callout-11-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <div class="cell">
 <div class="sourceCode cell-code" id="cb113"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb113-1"><a href="#cb113-1" aria-hidden="true" tabindex="-1"></a>mekong_countries_2012 <span class="ot">&lt;-</span> asean_data <span class="sc">%&gt;%</span></span>
@@ -1238,42 +1320,19 @@ Click to see the solution
 </div>
 </div>
 </section>
-<section id="calculate-average-life-expectancy" class="level3" data-number="3.2.3">
-<h3 data-number="3.2.3" class="anchored" data-anchor-id="calculate-average-life-expectancy"><span class="header-section-number">3.2.3</span> Calculate average life expectancy</h3>
-<p>These calculations only require some small changes to calculate average life expectancy across ASEAN countries instead of per capita GDP. Instead of multiplying per capita GDP by population, multiply life expectancy by population to give “life expectancy times population”, or “letp” for short.</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb131"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb131-1"><a href="#cb131-1" aria-hidden="true" tabindex="-1"></a>asean_lifeExp <span class="ot">&lt;-</span> asean_data <span class="sc">%&gt;%</span></span>
-<span id="cb131-2"><a href="#cb131-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">letp =</span> pop <span class="sc">*</span> lifeExp) <span class="sc">%&gt;%</span></span>
-<span id="cb131-3"><a href="#cb131-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(year) <span class="sc">%&gt;%</span></span>
-<span id="cb131-4"><a href="#cb131-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
-<span id="cb131-5"><a href="#cb131-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">pop =</span> <span class="fu">sum</span>(pop),</span>
-<span id="cb131-6"><a href="#cb131-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">letp =</span> <span class="fu">sum</span>(letp),</span>
-<span id="cb131-7"><a href="#cb131-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">lifeExp =</span> letp <span class="sc">/</span> pop) <span class="sc">%&gt;%</span></span>
-<span id="cb131-8"><a href="#cb131-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span>letp)</span>
-<span id="cb131-9"><a href="#cb131-9" aria-hidden="true" tabindex="-1"></a>asean_lifeExp</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre class="output"><code># A tibble: 2 × 3
-   year       pop lifeExp
-  &lt;dbl&gt;     &lt;dbl&gt;   &lt;dbl&gt;
-1  2012 613497000    71.3
-2  2022 680759000    72.1</code></pre>
-</div>
-</div>
-</section>
-<section id="list-of-dplyr-functions-we-have-used" class="level3" data-number="3.2.4">
-<h3 data-number="3.2.4" class="anchored" data-anchor-id="list-of-dplyr-functions-we-have-used"><span class="header-section-number">3.2.4</span> List of <code>dplyr</code> functions we have used</h3>
+<section id="list-of-dplyr-functions-we-have-used" class="level3" data-number="3.2.3">
+<h3 data-number="3.2.3" class="anchored" data-anchor-id="list-of-dplyr-functions-we-have-used"><span class="header-section-number">3.2.3</span> List of <code>dplyr</code> functions we have used</h3>
 <ul>
 <li><code>filter()</code>: for selecting particular rows of a data.frame</li>
 <li><code>mutate()</code>: for adding a new column (vector) to a data.frame, or to change an existing column</li>
 <li><code>summarise()</code>: to calculate things like sums or averages across multiple rows</li>
-<li><code>group_by()</code>: I don’t properly understand all the ways this function is used, but I often use it before <code>summarise()</code>, to calculate summaries by groups (e.g.&nbsp;for different years in the examples above)</li>
-<li><code>select()</code>: for selecting particular columns of a data.frame</li>
+<li><code>group_by()</code>: I don’t properly understand all the ways this function is used, but I often use it before <code>summarise()</code>, to calculate summaries by groups (e.g.&nbsp;for different years in the example above)</li>
 </ul>
 <p>There is a useful summary of <code>dplyr</code> commands on this <a href="https://www.rstudio.com/wp-content/uploads/2015/02/data-wrangling-cheatsheet.pdf">Data Wrangling Cheat Sheet</a>.</p>
 </section>
 </section>
-<section id="plotting-data-with-the-ggplot2-package" class="level2" data-number="3.3">
-<h2 data-number="3.3" class="anchored" data-anchor-id="plotting-data-with-the-ggplot2-package"><span class="header-section-number">3.3</span> Plotting data with the <code>ggplot2</code> package</h2>
+<section id="sec-plotting" class="level2" data-number="3.3">
+<h2 data-number="3.3" class="anchored" data-anchor-id="sec-plotting"><span class="header-section-number">3.3</span> Plotting data with the <code>ggplot2</code> package</h2>
 <p>I haven’t used <code>ggplot2</code> much: I usually plot graphs using “base R” (without using any packages). However, many people recommend <code>ggplot2</code> for graphs, so I am trying it out. I don’t yet understand the <a href="https://ggplot2.tidyverse.org/">“grammar of graphics”</a> used in <code>ggplot2</code>, so I’m definitely not qualified to teach anyone how to use it! Nevertheless, I’m still including this section to</p>
 <ul>
 <li>give a bit of a flavour of how <code>ggplot2</code> commands look, and</li>
@@ -1281,22 +1340,38 @@ Click to see the solution
 </ul>
 <p>I did a lot of googling to make the graphs below. I have included links to some pages that helped.</p>
 <p>I was impressed how fast it was to make some fairly complicated graphs with <code>ggplot2</code>, so I think I’ll start using it more to explore data. I really like base R for fine-tuning graphs and converting them to pdf files for publications, so I may keep using base R for that.</p>
-<section id="bar-graphs" class="level3" data-number="3.3.1">
-<h3 data-number="3.3.1" class="anchored" data-anchor-id="bar-graphs"><span class="header-section-number">3.3.1</span> Bar graphs</h3>
+<section id="bar-graphs-and-paired-t-tests" class="level3" data-number="3.3.1">
+<h3 data-number="3.3.1" class="anchored" data-anchor-id="bar-graphs-and-paired-t-tests"><span class="header-section-number">3.3.1</span> Bar graphs (and paired t-tests)</h3>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb133"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb133-1"><a href="#cb133-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
-<span id="cb133-2"><a href="#cb133-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb133-3"><a href="#cb133-3" aria-hidden="true" tabindex="-1"></a><span class="co">#https://r-graph-gallery.com/218-basic-barplots-with-ggplot2.html</span></span>
-<span id="cb133-4"><a href="#cb133-4" aria-hidden="true" tabindex="-1"></a><span class="co">#http://www.sthda.com/english/wiki/ggplot2-title-main-axis-and-legend-titles</span></span>
-<span id="cb133-5"><a href="#cb133-5" aria-hidden="true" tabindex="-1"></a><span class="co">#https://stackoverflow.com/questions/15629192/making-a-bar-chart-in-ggplot-with-vertical-labels-in-x-axis</span></span>
-<span id="cb133-6"><a href="#cb133-6" aria-hidden="true" tabindex="-1"></a><span class="co">#https://www.r-bloggers.com/2021/09/adding-text-labels-to-ggplot2-bar-chart/</span></span>
-<span id="cb133-7"><a href="#cb133-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb133-8"><a href="#cb133-8" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(asean_2022, <span class="fu">aes</span>(<span class="at">x=</span>country, <span class="at">y=</span>lifeExp)) <span class="sc">+</span></span>
-<span id="cb133-9"><a href="#cb133-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_bar</span>(<span class="at">fill =</span> <span class="st">"dodgerblue3"</span>, <span class="at">stat =</span> <span class="st">"identity"</span>) <span class="sc">+</span></span>
-<span id="cb133-10"><a href="#cb133-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylab</span>(<span class="st">"Life expectancy at birth (2022)"</span>) <span class="sc">+</span></span>
-<span id="cb133-11"><a href="#cb133-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_text</span>(<span class="fu">aes</span>(<span class="at">label =</span> lifeExp, <span class="at">vjust =</span> <span class="fl">1.2</span>)) <span class="sc">+</span> </span>
-<span id="cb133-12"><a href="#cb133-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_light</span>() <span class="sc">+</span> </span>
-<span id="cb133-13"><a href="#cb133-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">axis.text.x=</span><span class="fu">element_text</span>(<span class="at">angle=</span><span class="dv">90</span>,<span class="at">hjust=</span><span class="dv">1</span>,<span class="at">vjust=</span><span class="fl">0.5</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb131"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb131-1"><a href="#cb131-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
+<span id="cb131-2"><a href="#cb131-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb131-3"><a href="#cb131-3" aria-hidden="true" tabindex="-1"></a><span class="co">#https://r-graph-gallery.com/218-basic-barplots-with-ggplot2.html</span></span>
+<span id="cb131-4"><a href="#cb131-4" aria-hidden="true" tabindex="-1"></a><span class="co">#http://www.sthda.com/english/wiki/ggplot2-title-main-axis-and-legend-titles</span></span>
+<span id="cb131-5"><a href="#cb131-5" aria-hidden="true" tabindex="-1"></a><span class="co">#https://stackoverflow.com/questions/15629192/making-a-bar-chart-in-ggplot-with-vertical-labels-in-x-axis</span></span>
+<span id="cb131-6"><a href="#cb131-6" aria-hidden="true" tabindex="-1"></a><span class="co">#https://www.r-bloggers.com/2021/09/adding-text-labels-to-ggplot2-bar-chart/</span></span>
+<span id="cb131-7"><a href="#cb131-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb131-8"><a href="#cb131-8" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(asean_2022, <span class="fu">aes</span>(<span class="at">x=</span>country, <span class="at">y=</span>lifeExp)) <span class="sc">+</span></span>
+<span id="cb131-9"><a href="#cb131-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_bar</span>(<span class="at">fill =</span> <span class="st">"dodgerblue3"</span>, <span class="at">stat =</span> <span class="st">"identity"</span>) <span class="sc">+</span></span>
+<span id="cb131-10"><a href="#cb131-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylab</span>(<span class="st">"Life expectancy at birth (2022)"</span>) <span class="sc">+</span></span>
+<span id="cb131-11"><a href="#cb131-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_text</span>(<span class="fu">aes</span>(<span class="at">label =</span> lifeExp, <span class="at">vjust =</span> <span class="fl">1.2</span>)) <span class="sc">+</span> </span>
+<span id="cb131-12"><a href="#cb131-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_light</span>() <span class="sc">+</span> </span>
+<span id="cb131-13"><a href="#cb131-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">axis.text.x=</span><span class="fu">element_text</span>(<span class="at">angle=</span><span class="dv">90</span>,<span class="at">hjust=</span><span class="dv">1</span>,<span class="at">vjust=</span><span class="fl">0.5</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="introduction_to_R_files/figure-html/unnamed-chunk-59-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb132"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb132-1"><a href="#cb132-1" aria-hidden="true" tabindex="-1"></a><span class="co">#https://rpubs.com/dvdunne/ggplot_two_bars</span></span>
+<span id="cb132-2"><a href="#cb132-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb132-3"><a href="#cb132-3" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(asean_data, <span class="fu">aes</span>(<span class="at">x=</span>country, <span class="at">y=</span>lifeExp, <span class="at">fill=</span>year)) <span class="sc">+</span></span>
+<span id="cb132-4"><a href="#cb132-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_bar</span>(<span class="at">stat =</span> <span class="st">"identity"</span>, <span class="at">position =</span> <span class="st">"dodge"</span>) <span class="sc">+</span></span>
+<span id="cb132-5"><a href="#cb132-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylab</span>(<span class="st">"Life expectancy at birth"</span>) <span class="sc">+</span></span>
+<span id="cb132-6"><a href="#cb132-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_light</span>() <span class="sc">+</span> </span>
+<span id="cb132-7"><a href="#cb132-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">axis.text.x=</span><span class="fu">element_text</span>(<span class="at">angle=</span><span class="dv">90</span>,<span class="at">hjust=</span><span class="dv">1</span>,<span class="at">vjust=</span><span class="fl">0.5</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
@@ -1305,14 +1380,15 @@ Click to see the solution
 </div>
 </div>
 </div>
+<p>This is not what we want! Year is being treated as a continuous variable, ranging in value from 2012 to 2022. We can fix this by converting year to a categorical variable (called a factor in R).</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb134"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb134-1"><a href="#cb134-1" aria-hidden="true" tabindex="-1"></a><span class="co">#https://rpubs.com/dvdunne/ggplot_two_bars</span></span>
-<span id="cb134-2"><a href="#cb134-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb134-3"><a href="#cb134-3" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(asean_data, <span class="fu">aes</span>(<span class="at">x=</span>country, <span class="at">y=</span>lifeExp, <span class="at">fill=</span>year)) <span class="sc">+</span></span>
-<span id="cb134-4"><a href="#cb134-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_bar</span>(<span class="at">stat =</span> <span class="st">"identity"</span>, <span class="at">position =</span> <span class="st">"dodge"</span>) <span class="sc">+</span></span>
-<span id="cb134-5"><a href="#cb134-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylab</span>(<span class="st">"Life expectancy at birth"</span>) <span class="sc">+</span></span>
-<span id="cb134-6"><a href="#cb134-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_light</span>() <span class="sc">+</span> </span>
-<span id="cb134-7"><a href="#cb134-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">axis.text.x=</span><span class="fu">element_text</span>(<span class="at">angle=</span><span class="dv">90</span>,<span class="at">hjust=</span><span class="dv">1</span>,<span class="at">vjust=</span><span class="fl">0.5</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb133"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb133-1"><a href="#cb133-1" aria-hidden="true" tabindex="-1"></a>asean_data <span class="ot">&lt;-</span> asean_data <span class="sc">%&gt;%</span></span>
+<span id="cb133-2"><a href="#cb133-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">year =</span> <span class="fu">as.factor</span>(year))</span>
+<span id="cb133-3"><a href="#cb133-3" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(asean_data, <span class="fu">aes</span>(<span class="at">x=</span>country, <span class="at">y=</span>lifeExp, <span class="at">fill=</span>year)) <span class="sc">+</span></span>
+<span id="cb133-4"><a href="#cb133-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_bar</span>(<span class="at">stat =</span> <span class="st">"identity"</span>, <span class="at">position =</span> <span class="st">"dodge"</span>) <span class="sc">+</span></span>
+<span id="cb133-5"><a href="#cb133-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylab</span>(<span class="st">"Life expectancy at birth"</span>) <span class="sc">+</span></span>
+<span id="cb133-6"><a href="#cb133-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_light</span>() <span class="sc">+</span> </span>
+<span id="cb133-7"><a href="#cb133-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">axis.text.x=</span><span class="fu">element_text</span>(<span class="at">angle=</span><span class="dv">90</span>,<span class="at">hjust=</span><span class="dv">1</span>,<span class="at">vjust=</span><span class="fl">0.5</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
@@ -1321,111 +1397,207 @@ Click to see the solution
 </div>
 </div>
 </div>
-<p>This is not what we want! Year is being treated as a continuous variable, ranging in value from 2012 to 2022. We can fix this by converting year to a categorical variable (called a factor in R).</p>
+<p>Let’s calculate change in life expectancy between 2012 and 2022 for each country. To do this, let’s make a table that has one row for each country, and separate columns for life expectancy in 2012 (<code>le2012</code>) and 2022 (<code>le2022</code>). We can do this by using <code>group_by()</code> and <code>summarise()</code> again.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb135"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb135-1"><a href="#cb135-1" aria-hidden="true" tabindex="-1"></a>asean_data <span class="ot">&lt;-</span> asean_data <span class="sc">%&gt;%</span></span>
-<span id="cb135-2"><a href="#cb135-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">year =</span> <span class="fu">as.factor</span>(year))</span>
-<span id="cb135-3"><a href="#cb135-3" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(asean_data, <span class="fu">aes</span>(<span class="at">x=</span>country, <span class="at">y=</span>lifeExp, <span class="at">fill=</span>year)) <span class="sc">+</span></span>
-<span id="cb135-4"><a href="#cb135-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_bar</span>(<span class="at">stat =</span> <span class="st">"identity"</span>, <span class="at">position =</span> <span class="st">"dodge"</span>) <span class="sc">+</span></span>
-<span id="cb135-5"><a href="#cb135-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylab</span>(<span class="st">"Life expectancy at birth"</span>) <span class="sc">+</span></span>
-<span id="cb135-6"><a href="#cb135-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_light</span>() <span class="sc">+</span> </span>
-<span id="cb135-7"><a href="#cb135-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">axis.text.x=</span><span class="fu">element_text</span>(<span class="at">angle=</span><span class="dv">90</span>,<span class="at">hjust=</span><span class="dv">1</span>,<span class="at">vjust=</span><span class="fl">0.5</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb134"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb134-1"><a href="#cb134-1" aria-hidden="true" tabindex="-1"></a>life_exp_table <span class="ot">&lt;-</span> asean_data <span class="sc">%&gt;%</span></span>
+<span id="cb134-2"><a href="#cb134-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(year) <span class="sc">%&gt;%</span> </span>
+<span id="cb134-3"><a href="#cb134-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(country) <span class="sc">%&gt;%</span></span>
+<span id="cb134-4"><a href="#cb134-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
+<span id="cb134-5"><a href="#cb134-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">le2012 =</span> <span class="fu">first</span>(lifeExp),</span>
+<span id="cb134-6"><a href="#cb134-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">le2022 =</span> <span class="fu">last</span>(lifeExp),</span>
+<span id="cb134-7"><a href="#cb134-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">le_change =</span> le2022 <span class="sc">-</span> le2012,</span>
+<span id="cb134-8"><a href="#cb134-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">pop2022 =</span> <span class="fu">last</span>(pop))</span>
+<span id="cb134-9"><a href="#cb134-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb134-10"><a href="#cb134-10" aria-hidden="true" tabindex="-1"></a>life_exp_table</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre class="output"><code># A tibble: 10 × 5
+   country     le2012 le2022 le_change   pop2022
+   &lt;chr&gt;        &lt;dbl&gt;  &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;
+ 1 Brunei        74     74.2     0.200    449000
+ 2 Cambodia      67.9   69.1     1.20   16800000
+ 3 Indonesia     69.8   69.1    -0.700 276000000
+ 4 Lao           66.2   69.8     3.60    7530000
+ 5 Malaysia      74.8   75.5     0.700  33900000
+ 6 Myanmar       66.1   70.1     4      54200000
+ 7 Philippines   70.7   72.2     1.5   116000000
+ 8 Singapore     83.3   85.2     1.90    5980000
+ 9 Thailand      77.7   79.1     1.40   71700000
+10 Vietnam       73.5   75       1.5    98200000</code></pre>
+</div>
+</div>
+<p>There are some other <code>dplyr</code> function in here that we haven’t seen before:</p>
+<ul>
+<li><p><code>arrange(year)</code> sorts the table by year, so that the 2012 data appears before the 2022 data</p></li>
+<li><p>Once the data is grouped by <code>country</code>, the function <code>first()</code> is used to select the first life expectancy value for the country (the one for 2012), and the function <code>last()</code> is used to select the last life expectancy and population for the country (from 2022)</p></li>
+</ul>
+<p>We can make a bar-graph to show the changes in life expectancy for each country:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb136"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb136-1"><a href="#cb136-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
+<span id="cb136-2"><a href="#cb136-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(life_exp_table, <span class="fu">aes</span>(<span class="at">x=</span>country, <span class="at">y=</span>le_change)) <span class="sc">+</span></span>
+<span id="cb136-3"><a href="#cb136-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_bar</span>(<span class="at">fill =</span> <span class="st">"dodgerblue3"</span>, <span class="at">stat =</span> <span class="st">"identity"</span>) <span class="sc">+</span></span>
+<span id="cb136-4"><a href="#cb136-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylab</span>(<span class="st">"change in life expectancy (years), 2012 -&gt; 2022"</span>) <span class="sc">+</span></span>
+<span id="cb136-5"><a href="#cb136-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_text</span>(<span class="fu">aes</span>(<span class="at">label =</span> <span class="fu">round</span>(le_change,<span class="dv">1</span>), <span class="at">vjust =</span> <span class="sc">-</span><span class="dv">1</span>)) <span class="sc">+</span> </span>
+<span id="cb136-6"><a href="#cb136-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_light</span>() <span class="sc">+</span> </span>
+<span id="cb136-7"><a href="#cb136-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">axis.text.x=</span><span class="fu">element_text</span>(<span class="at">angle=</span><span class="dv">90</span>,<span class="at">hjust=</span><span class="dv">1</span>,<span class="at">vjust=</span><span class="fl">0.5</span>)) <span class="sc">+</span></span>
+<span id="cb136-8"><a href="#cb136-8" aria-hidden="true" tabindex="-1"></a>  <span class="co">#https://ggplot2.tidyverse.org/reference/lims.html</span></span>
+<span id="cb136-9"><a href="#cb136-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylim</span>(<span class="sc">-</span><span class="dv">1</span>, <span class="fl">4.5</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="introduction_to_R_files/figure-html/unnamed-chunk-62-1.png" class="img-fluid figure-img" width="672"></p>
+<p><img src="introduction_to_R_files/figure-html/unnamed-chunk-63-1.png" class="img-fluid figure-img" width="672"></p>
 </figure>
 </div>
 </div>
 </div>
+<p>We can also do a paired t-test, to test the hypothesis that average life expectancy has increased from 2012 to 2022 across the 10 ASEAN countries. Here are 3 methods to do this test: they all give the same result.</p>
+<section id="method-1-compare-life-expectancies-in-2022-and-2012-using-the-t.test-function" class="level4">
+<h4 class="anchored" data-anchor-id="method-1-compare-life-expectancies-in-2022-and-2012-using-the-t.test-function">Method 1: Compare life expectancies in 2022 and 2012 using the <code>t.test()</code> function</h4>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb136"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb136-1"><a href="#cb136-1" aria-hidden="true" tabindex="-1"></a>life_exp_table <span class="ot">&lt;-</span> asean_data <span class="sc">%&gt;%</span></span>
-<span id="cb136-2"><a href="#cb136-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(year) <span class="sc">%&gt;%</span> <span class="co"># A new dplyr function to sort rows of a dataset</span></span>
-<span id="cb136-3"><a href="#cb136-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(country) <span class="sc">%&gt;%</span></span>
-<span id="cb136-4"><a href="#cb136-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
-<span id="cb136-5"><a href="#cb136-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">le2012 =</span> <span class="fu">first</span>(lifeExp),</span>
-<span id="cb136-6"><a href="#cb136-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">le2022 =</span> <span class="fu">last</span>(lifeExp),</span>
-<span id="cb136-7"><a href="#cb136-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">le_change =</span> le2022 <span class="sc">-</span> le2012)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb137"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb137-1"><a href="#cb137-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
-<span id="cb137-2"><a href="#cb137-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(life_exp_table, <span class="fu">aes</span>(<span class="at">x=</span>country, <span class="at">y=</span>le_change)) <span class="sc">+</span></span>
-<span id="cb137-3"><a href="#cb137-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_bar</span>(<span class="at">fill =</span> <span class="st">"dodgerblue3"</span>, <span class="at">stat =</span> <span class="st">"identity"</span>) <span class="sc">+</span></span>
-<span id="cb137-4"><a href="#cb137-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylab</span>(<span class="st">"change in life expectancy (years), 2012 -&gt; 2022"</span>) <span class="sc">+</span></span>
-<span id="cb137-5"><a href="#cb137-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_text</span>(<span class="fu">aes</span>(<span class="at">label =</span> <span class="fu">round</span>(le_change,<span class="dv">1</span>), <span class="at">vjust =</span> <span class="sc">-</span><span class="dv">1</span>)) <span class="sc">+</span> </span>
-<span id="cb137-6"><a href="#cb137-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_light</span>() <span class="sc">+</span> </span>
-<span id="cb137-7"><a href="#cb137-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">axis.text.x=</span><span class="fu">element_text</span>(<span class="at">angle=</span><span class="dv">90</span>,<span class="at">hjust=</span><span class="dv">1</span>,<span class="at">vjust=</span><span class="fl">0.5</span>)) <span class="sc">+</span></span>
-<span id="cb137-8"><a href="#cb137-8" aria-hidden="true" tabindex="-1"></a>  <span class="co">#https://ggplot2.tidyverse.org/reference/lims.html</span></span>
-<span id="cb137-9"><a href="#cb137-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylim</span>(<span class="sc">-</span><span class="dv">1</span>, <span class="fl">4.5</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output-display">
-<div>
-<figure class="figure">
-<p><img src="introduction_to_R_files/figure-html/unnamed-chunk-64-1.png" class="img-fluid figure-img" width="672"></p>
-</figure>
-</div>
+<div class="sourceCode cell-code" id="cb137"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb137-1"><a href="#cb137-1" aria-hidden="true" tabindex="-1"></a><span class="fu">t.test</span>(life_exp_table<span class="sc">$</span>le2022, life_exp_table<span class="sc">$</span>le2012, <span class="at">paired =</span> T)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre class="output"><code>
+    Paired t-test
+
+data:  life_exp_table$le2022 and life_exp_table$le2012
+t = 3.4135, df = 9, p-value = 0.007707
+alternative hypothesis: true mean difference is not equal to 0
+95 percent confidence interval:
+ 0.5160589 2.5439411
+sample estimates:
+mean difference 
+           1.53 </code></pre>
 </div>
 </div>
 </section>
-<section id="line-graphs-showing-changes-in-a-variable-over-time" class="level3" data-number="3.3.2">
-<h3 data-number="3.3.2" class="anchored" data-anchor-id="line-graphs-showing-changes-in-a-variable-over-time"><span class="header-section-number">3.3.2</span> Line graphs showing changes in a variable over time</h3>
+<section id="method-2-look-at-changes-in-life-expectancy" class="level4">
+<h4 class="anchored" data-anchor-id="method-2-look-at-changes-in-life-expectancy">Method 2: Look at changes in life expectancy</h4>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb139"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb139-1"><a href="#cb139-1" aria-hidden="true" tabindex="-1"></a><span class="fu">t.test</span>(life_exp_table<span class="sc">$</span>le_change)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre class="output"><code>
+    One Sample t-test
+
+data:  life_exp_table$le_change
+t = 3.4135, df = 9, p-value = 0.007707
+alternative hypothesis: true mean is not equal to 0
+95 percent confidence interval:
+ 0.5160589 2.5439411
+sample estimates:
+mean of x 
+     1.53 </code></pre>
+</div>
+</div>
+</section>
+<section id="method-3-run-a-simple-linear-regression-model-with-the-lm-function" class="level4">
+<h4 class="anchored" data-anchor-id="method-3-run-a-simple-linear-regression-model-with-the-lm-function">Method 3: run a simple linear regression model with the <code>lm()</code> function</h4>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb141"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb141-1"><a href="#cb141-1" aria-hidden="true" tabindex="-1"></a>regression_model <span class="ot">&lt;-</span> <span class="fu">lm</span>(le_change <span class="sc">~</span> <span class="dv">1</span>, <span class="at">data =</span> life_exp_table)</span>
+<span id="cb141-2"><a href="#cb141-2" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(regression_model)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre class="output"><code>
+Call:
+lm(formula = le_change ~ 1, data = life_exp_table)
+
+Residuals:
+   Min     1Q Median     3Q    Max 
+-2.230 -0.705 -0.080  0.270  2.470 
+
+Coefficients:
+            Estimate Std. Error t value Pr(&gt;|t|)   
+(Intercept)   1.5300     0.4482   3.414  0.00771 **
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 1.417 on 9 degrees of freedom</code></pre>
+</div>
+</div>
+<p><code>lm()</code> is the R function to linear regression. The paired t-test is equivalent to a simple linear regression model, with only a constant term in the model.</p>
+</section>
+<section id="alternative-method-give-greater-weight-to-larger-countries" class="level4">
+<h4 class="anchored" data-anchor-id="alternative-method-give-greater-weight-to-larger-countries">Alternative method: give greater weight to larger countries</h4>
+<p>The paired t-test above treats all 10 countries equally. In some contexts, it might be more appropriate to give greater weight to the countries with larger populations:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb143"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb143-1"><a href="#cb143-1" aria-hidden="true" tabindex="-1"></a>weighted_regression_model <span class="ot">&lt;-</span> <span class="fu">lm</span>(le_change <span class="sc">~</span> <span class="dv">1</span>, <span class="at">weights =</span> pop2022, </span>
+<span id="cb143-2"><a href="#cb143-2" aria-hidden="true" tabindex="-1"></a>                                <span class="at">data =</span> life_exp_table)</span>
+<span id="cb143-3"><a href="#cb143-3" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(weighted_regression_model)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre class="output"><code>
+Call:
+lm(formula = le_change ~ 1, data = life_exp_table, weights = pop2022)
+
+Weighted Residuals:
+     Min       1Q   Median       3Q      Max 
+-24508.0    146.2   4020.5   7609.2  23741.1 
+
+Coefficients:
+            Estimate Std. Error t value Pr(&gt;|t|)
+(Intercept)   0.7752     0.4739   1.636    0.136
+
+Residual standard error: 12360 on 9 degrees of freedom</code></pre>
+</div>
+</div>
+</section>
+</section>
+<section id="sec-line-graphs" class="level3" data-number="3.3.2">
+<h3 data-number="3.3.2" class="anchored" data-anchor-id="sec-line-graphs"><span class="header-section-number">3.3.2</span> Line graphs showing changes in a variable over time</h3>
 <p>To plot the graphs from now on, you need to download a much bigger CSV file of Gapminder data, called <code>big_gapminder_dataset.csv</code>. It is available <a href="https://github.com/jimstankovich/notes/blob/main/data/big_gapminder_dataset.csv">here</a>.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb138"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb138-1"><a href="#cb138-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Change the folder below to point to the data you downloaded.</span></span>
-<span id="cb138-2"><a href="#cb138-2" aria-hidden="true" tabindex="-1"></a>big_gapminder_dataset <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"~/Documents/Research Methodology in Social Sciences/introduction_to_R/data/big_gapminder_dataset.csv"</span>,</span>
-<span id="cb138-3"><a href="#cb138-3" aria-hidden="true" tabindex="-1"></a>        <span class="at">show_col_types =</span> <span class="cn">FALSE</span>)</span>
-<span id="cb138-4"><a href="#cb138-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb138-5"><a href="#cb138-5" aria-hidden="true" tabindex="-1"></a>lifeExp_since_1900 <span class="ot">&lt;-</span> big_gapminder_dataset <span class="sc">%&gt;%</span> </span>
-<span id="cb138-6"><a href="#cb138-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(year <span class="sc">&gt;=</span> <span class="dv">1900</span> <span class="sc">&amp;</span> year <span class="sc">&lt;=</span> <span class="dv">2022</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb138-7"><a href="#cb138-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(country, continent, year, lifeExp) <span class="sc">%&gt;%</span></span>
-<span id="cb138-8"><a href="#cb138-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">asean =</span> country <span class="sc">%in%</span> ASEAN_countries)</span>
-<span id="cb138-9"><a href="#cb138-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb138-10"><a href="#cb138-10" aria-hidden="true" tabindex="-1"></a>asean_lifexp_since_1900 <span class="ot">&lt;-</span> lifeExp_since_1900 <span class="sc">%&gt;%</span></span>
-<span id="cb138-11"><a href="#cb138-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(asean <span class="sc">==</span> <span class="cn">TRUE</span>)</span>
-<span id="cb138-12"><a href="#cb138-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb138-13"><a href="#cb138-13" aria-hidden="true" tabindex="-1"></a>other_countries <span class="ot">&lt;-</span> lifeExp_since_1900 <span class="sc">%&gt;%</span></span>
-<span id="cb138-14"><a href="#cb138-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(asean <span class="sc">==</span> <span class="cn">FALSE</span>)</span>
-<span id="cb138-15"><a href="#cb138-15" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb138-16"><a href="#cb138-16" aria-hidden="true" tabindex="-1"></a><span class="co"># This palette was recommended for people who are colour-blind</span></span>
-<span id="cb138-17"><a href="#cb138-17" aria-hidden="true" tabindex="-1"></a><span class="co"># https://stackoverflow.com/questions/9563711/r-color-palettes-for-many-data-classes</span></span>
-<span id="cb138-18"><a href="#cb138-18" aria-hidden="true" tabindex="-1"></a>colours1 <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"#88CCEE"</span>, <span class="st">"#CC6677"</span>, <span class="st">"#DDCC77"</span>, <span class="st">"#117733"</span>,</span>
-<span id="cb138-19"><a href="#cb138-19" aria-hidden="true" tabindex="-1"></a>             <span class="st">"#332288"</span>, <span class="st">"#AA4499"</span>, <span class="st">"#44AA99"</span>, <span class="st">"#999933"</span>,</span>
-<span id="cb138-20"><a href="#cb138-20" aria-hidden="true" tabindex="-1"></a>             <span class="st">"#882255"</span>, <span class="st">"#661100"</span>)</span>
-<span id="cb138-21"><a href="#cb138-21" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb138-22"><a href="#cb138-22" aria-hidden="true" tabindex="-1"></a><span class="co"># Another palette from the start of the same chat</span></span>
-<span id="cb138-23"><a href="#cb138-23" aria-hidden="true" tabindex="-1"></a>colours2 <span class="ot">&lt;-</span> <span class="fu">c</span>(</span>
-<span id="cb138-24"><a href="#cb138-24" aria-hidden="true" tabindex="-1"></a>  <span class="st">"dodgerblue2"</span>, <span class="st">"#E31A1C"</span>, <span class="co"># red</span></span>
-<span id="cb138-25"><a href="#cb138-25" aria-hidden="true" tabindex="-1"></a>  <span class="st">"green4"</span>,</span>
-<span id="cb138-26"><a href="#cb138-26" aria-hidden="true" tabindex="-1"></a>  <span class="st">"#6A3D9A"</span>, <span class="co"># purple</span></span>
-<span id="cb138-27"><a href="#cb138-27" aria-hidden="true" tabindex="-1"></a>  <span class="st">"#FF7F00"</span>, <span class="co"># orange</span></span>
-<span id="cb138-28"><a href="#cb138-28" aria-hidden="true" tabindex="-1"></a>  <span class="st">"black"</span>, <span class="st">"gold1"</span>,</span>
-<span id="cb138-29"><a href="#cb138-29" aria-hidden="true" tabindex="-1"></a>  <span class="st">"skyblue2"</span>, <span class="st">"#FB9A99"</span>, <span class="co"># lt pink</span></span>
-<span id="cb138-30"><a href="#cb138-30" aria-hidden="true" tabindex="-1"></a>  <span class="st">"palegreen2"</span>)</span>
-<span id="cb138-31"><a href="#cb138-31" aria-hidden="true" tabindex="-1"></a><span class="co"># I found it easier to distinguish the countries using this palette</span></span>
-<span id="cb138-32"><a href="#cb138-32" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb138-33"><a href="#cb138-33" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data =</span> asean_lifexp_since_1900, <span class="at">mapping =</span> <span class="fu">aes</span>(<span class="at">x=</span>year, <span class="at">y=</span>lifeExp, <span class="at">group=</span>country, <span class="at">color=</span>country)) <span class="sc">+</span></span>
-<span id="cb138-34"><a href="#cb138-34" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>() <span class="sc">+</span></span>
-<span id="cb138-35"><a href="#cb138-35" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_color_manual</span>(<span class="at">values =</span> colours2) <span class="sc">+</span> </span>
-<span id="cb138-36"><a href="#cb138-36" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylab</span>(<span class="st">"Life expectancy at birth"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb145"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb145-1"><a href="#cb145-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Change the folder below to point to the data you downloaded.</span></span>
+<span id="cb145-2"><a href="#cb145-2" aria-hidden="true" tabindex="-1"></a>big_gapminder_dataset <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"~/Documents/Research Methodology in Social Sciences/introduction_to_R/data/big_gapminder_dataset.csv"</span>,</span>
+<span id="cb145-3"><a href="#cb145-3" aria-hidden="true" tabindex="-1"></a>        <span class="at">show_col_types =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb145-4"><a href="#cb145-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb145-5"><a href="#cb145-5" aria-hidden="true" tabindex="-1"></a>lifeExp_since_1900 <span class="ot">&lt;-</span> big_gapminder_dataset <span class="sc">%&gt;%</span> </span>
+<span id="cb145-6"><a href="#cb145-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(year <span class="sc">&gt;=</span> <span class="dv">1900</span> <span class="sc">&amp;</span> year <span class="sc">&lt;=</span> <span class="dv">2022</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb145-7"><a href="#cb145-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(country, continent, year, lifeExp) <span class="sc">%&gt;%</span></span>
+<span id="cb145-8"><a href="#cb145-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">asean =</span> country <span class="sc">%in%</span> ASEAN_countries)</span>
+<span id="cb145-9"><a href="#cb145-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb145-10"><a href="#cb145-10" aria-hidden="true" tabindex="-1"></a>asean_lifexp_since_1900 <span class="ot">&lt;-</span> lifeExp_since_1900 <span class="sc">%&gt;%</span></span>
+<span id="cb145-11"><a href="#cb145-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(asean <span class="sc">==</span> <span class="cn">TRUE</span>)</span>
+<span id="cb145-12"><a href="#cb145-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb145-13"><a href="#cb145-13" aria-hidden="true" tabindex="-1"></a>other_countries <span class="ot">&lt;-</span> lifeExp_since_1900 <span class="sc">%&gt;%</span></span>
+<span id="cb145-14"><a href="#cb145-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(asean <span class="sc">==</span> <span class="cn">FALSE</span>)</span>
+<span id="cb145-15"><a href="#cb145-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb145-16"><a href="#cb145-16" aria-hidden="true" tabindex="-1"></a><span class="co"># This palette was recommended for people who are colour-blind</span></span>
+<span id="cb145-17"><a href="#cb145-17" aria-hidden="true" tabindex="-1"></a><span class="co"># https://stackoverflow.com/questions/9563711/r-color-palettes-for-many-data-classes</span></span>
+<span id="cb145-18"><a href="#cb145-18" aria-hidden="true" tabindex="-1"></a>colours1 <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"#88CCEE"</span>, <span class="st">"#CC6677"</span>, <span class="st">"#DDCC77"</span>, <span class="st">"#117733"</span>,</span>
+<span id="cb145-19"><a href="#cb145-19" aria-hidden="true" tabindex="-1"></a>             <span class="st">"#332288"</span>, <span class="st">"#AA4499"</span>, <span class="st">"#44AA99"</span>, <span class="st">"#999933"</span>,</span>
+<span id="cb145-20"><a href="#cb145-20" aria-hidden="true" tabindex="-1"></a>             <span class="st">"#882255"</span>, <span class="st">"#661100"</span>)</span>
+<span id="cb145-21"><a href="#cb145-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb145-22"><a href="#cb145-22" aria-hidden="true" tabindex="-1"></a><span class="co"># Another palette from the start of the same chat</span></span>
+<span id="cb145-23"><a href="#cb145-23" aria-hidden="true" tabindex="-1"></a>colours2 <span class="ot">&lt;-</span> <span class="fu">c</span>(</span>
+<span id="cb145-24"><a href="#cb145-24" aria-hidden="true" tabindex="-1"></a>  <span class="st">"dodgerblue2"</span>, <span class="st">"#E31A1C"</span>, <span class="co"># red</span></span>
+<span id="cb145-25"><a href="#cb145-25" aria-hidden="true" tabindex="-1"></a>  <span class="st">"green4"</span>,</span>
+<span id="cb145-26"><a href="#cb145-26" aria-hidden="true" tabindex="-1"></a>  <span class="st">"#6A3D9A"</span>, <span class="co"># purple</span></span>
+<span id="cb145-27"><a href="#cb145-27" aria-hidden="true" tabindex="-1"></a>  <span class="st">"#FF7F00"</span>, <span class="co"># orange</span></span>
+<span id="cb145-28"><a href="#cb145-28" aria-hidden="true" tabindex="-1"></a>  <span class="st">"black"</span>, <span class="st">"gold1"</span>,</span>
+<span id="cb145-29"><a href="#cb145-29" aria-hidden="true" tabindex="-1"></a>  <span class="st">"skyblue2"</span>, <span class="st">"#FB9A99"</span>, <span class="co"># lt pink</span></span>
+<span id="cb145-30"><a href="#cb145-30" aria-hidden="true" tabindex="-1"></a>  <span class="st">"palegreen2"</span>)</span>
+<span id="cb145-31"><a href="#cb145-31" aria-hidden="true" tabindex="-1"></a><span class="co"># I found it easier to distinguish the countries using this palette</span></span>
+<span id="cb145-32"><a href="#cb145-32" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb145-33"><a href="#cb145-33" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data =</span> asean_lifexp_since_1900, <span class="at">mapping =</span> <span class="fu">aes</span>(<span class="at">x=</span>year, <span class="at">y=</span>lifeExp, <span class="at">group=</span>country, <span class="at">color=</span>country)) <span class="sc">+</span></span>
+<span id="cb145-34"><a href="#cb145-34" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>() <span class="sc">+</span></span>
+<span id="cb145-35"><a href="#cb145-35" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_color_manual</span>(<span class="at">values =</span> colours2) <span class="sc">+</span> </span>
+<span id="cb145-36"><a href="#cb145-36" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylab</span>(<span class="st">"Life expectancy at birth"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="introduction_to_R_files/figure-html/unnamed-chunk-65-1.png" class="img-fluid figure-img" width="672"></p>
+<p><img src="introduction_to_R_files/figure-html/unnamed-chunk-68-1.png" class="img-fluid figure-img" width="672"></p>
 </figure>
 </div>
 </div>
-<div class="sourceCode cell-code" id="cb139"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb139-1"><a href="#cb139-1" aria-hidden="true" tabindex="-1"></a><span class="co"># https://stackoverflow.com/questions/40297206/overlaying-two-plots-using-ggplot2-in-r</span></span>
-<span id="cb139-2"><a href="#cb139-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data =</span> other_countries, </span>
-<span id="cb139-3"><a href="#cb139-3" aria-hidden="true" tabindex="-1"></a>       <span class="at">mapping =</span> <span class="fu">aes</span>(<span class="at">x=</span>year, <span class="at">y=</span>lifeExp, <span class="at">group=</span>country)) <span class="sc">+</span></span>
-<span id="cb139-4"><a href="#cb139-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="at">col =</span> <span class="fu">rgb</span>(<span class="fl">0.8</span>,<span class="fl">0.8</span>,<span class="fl">0.8</span>,<span class="fl">0.5</span>)) <span class="sc">+</span></span>
-<span id="cb139-5"><a href="#cb139-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="at">data =</span> asean_lifexp_since_1900, </span>
-<span id="cb139-6"><a href="#cb139-6" aria-hidden="true" tabindex="-1"></a>            <span class="at">mapping =</span> <span class="fu">aes</span>(<span class="at">x=</span>year, <span class="at">y=</span>lifeExp, <span class="at">group=</span>country,</span>
-<span id="cb139-7"><a href="#cb139-7" aria-hidden="true" tabindex="-1"></a>                          <span class="at">color=</span>country)) <span class="sc">+</span></span>
-<span id="cb139-8"><a href="#cb139-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_color_manual</span>(<span class="at">values =</span> colours2) <span class="sc">+</span> </span>
-<span id="cb139-9"><a href="#cb139-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylab</span>(<span class="st">"Life expectancy at birth"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb146"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb146-1"><a href="#cb146-1" aria-hidden="true" tabindex="-1"></a><span class="co"># https://stackoverflow.com/questions/40297206/overlaying-two-plots-using-ggplot2-in-r</span></span>
+<span id="cb146-2"><a href="#cb146-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data =</span> other_countries, </span>
+<span id="cb146-3"><a href="#cb146-3" aria-hidden="true" tabindex="-1"></a>       <span class="at">mapping =</span> <span class="fu">aes</span>(<span class="at">x=</span>year, <span class="at">y=</span>lifeExp, <span class="at">group=</span>country)) <span class="sc">+</span></span>
+<span id="cb146-4"><a href="#cb146-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="at">col =</span> <span class="fu">rgb</span>(<span class="fl">0.8</span>,<span class="fl">0.8</span>,<span class="fl">0.8</span>,<span class="fl">0.5</span>)) <span class="sc">+</span></span>
+<span id="cb146-5"><a href="#cb146-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="at">data =</span> asean_lifexp_since_1900, </span>
+<span id="cb146-6"><a href="#cb146-6" aria-hidden="true" tabindex="-1"></a>            <span class="at">mapping =</span> <span class="fu">aes</span>(<span class="at">x=</span>year, <span class="at">y=</span>lifeExp, <span class="at">group=</span>country,</span>
+<span id="cb146-7"><a href="#cb146-7" aria-hidden="true" tabindex="-1"></a>                          <span class="at">color=</span>country)) <span class="sc">+</span></span>
+<span id="cb146-8"><a href="#cb146-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_color_manual</span>(<span class="at">values =</span> colours2) <span class="sc">+</span> </span>
+<span id="cb146-9"><a href="#cb146-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylab</span>(<span class="st">"Life expectancy at birth"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="introduction_to_R_files/figure-html/unnamed-chunk-65-2.png" class="img-fluid figure-img" width="672"></p>
+<p><img src="introduction_to_R_files/figure-html/unnamed-chunk-68-2.png" class="img-fluid figure-img" width="672"></p>
 </figure>
 </div>
 </div>
@@ -1434,16 +1606,16 @@ Click to see the solution
 <section id="scatterplot-of-2-continuous-variables-against-each-other" class="level3" data-number="3.3.3">
 <h3 data-number="3.3.3" class="anchored" data-anchor-id="scatterplot-of-2-continuous-variables-against-each-other"><span class="header-section-number">3.3.3</span> Scatterplot of 2 continuous variables against each other</h3>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb140"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb140-1"><a href="#cb140-1" aria-hidden="true" tabindex="-1"></a>asean_2022 <span class="sc">%&gt;%</span></span>
-<span id="cb140-2"><a href="#cb140-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x=</span>gdpPercap, <span class="at">y=</span>lifeExp)) <span class="sc">+</span></span>
-<span id="cb140-3"><a href="#cb140-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">col =</span> <span class="st">"dodgerblue"</span>, <span class="at">size =</span> <span class="dv">3</span>) <span class="sc">+</span></span>
-<span id="cb140-4"><a href="#cb140-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">xlab</span>(<span class="st">"GDP per capita, 2022 (purchasing power parity, 2017 US dollars)"</span>) <span class="sc">+</span></span>
-<span id="cb140-5"><a href="#cb140-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylab</span>(<span class="st">"life expectancy at birth, 2022"</span>) <span class="sc">+</span></span>
-<span id="cb140-6"><a href="#cb140-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_light</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb147"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb147-1"><a href="#cb147-1" aria-hidden="true" tabindex="-1"></a>asean_2022 <span class="sc">%&gt;%</span></span>
+<span id="cb147-2"><a href="#cb147-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x=</span>gdpPercap, <span class="at">y=</span>lifeExp)) <span class="sc">+</span></span>
+<span id="cb147-3"><a href="#cb147-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">col =</span> <span class="st">"dodgerblue"</span>, <span class="at">size =</span> <span class="dv">3</span>) <span class="sc">+</span></span>
+<span id="cb147-4"><a href="#cb147-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">xlab</span>(<span class="st">"GDP per capita, 2022 (purchasing power parity, 2017 US dollars)"</span>) <span class="sc">+</span></span>
+<span id="cb147-5"><a href="#cb147-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylab</span>(<span class="st">"life expectancy at birth, 2022"</span>) <span class="sc">+</span></span>
+<span id="cb147-6"><a href="#cb147-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_light</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="introduction_to_R_files/figure-html/unnamed-chunk-66-1.png" class="img-fluid figure-img" width="672"></p>
+<p><img src="introduction_to_R_files/figure-html/unnamed-chunk-69-1.png" class="img-fluid figure-img" width="672"></p>
 </figure>
 </div>
 </div>
@@ -1453,108 +1625,393 @@ Click to see the solution
 <h3 data-number="3.3.4" class="anchored" data-anchor-id="bubble-charts"><span class="header-section-number">3.3.4</span> Bubble charts</h3>
 <p>(Scatterplots with different-sized circles for different points)</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb141"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb141-1"><a href="#cb141-1" aria-hidden="true" tabindex="-1"></a>asean_2022 <span class="sc">%&gt;%</span></span>
-<span id="cb141-2"><a href="#cb141-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x=</span>gdpPercap, <span class="at">y=</span>lifeExp, <span class="at">size=</span>pop)) <span class="sc">+</span></span>
-<span id="cb141-3"><a href="#cb141-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">col =</span> <span class="st">"dodgerblue"</span>, <span class="at">alpha=</span><span class="fl">0.5</span>) <span class="sc">+</span></span>
-<span id="cb141-4"><a href="#cb141-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_size</span>(<span class="at">range =</span> <span class="fu">c</span>(<span class="dv">2</span>, <span class="dv">24</span>), <span class="at">name=</span><span class="st">"Population"</span>) <span class="sc">+</span></span>
-<span id="cb141-5"><a href="#cb141-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_log10</span>(<span class="at">limits =</span> <span class="fu">c</span>(<span class="dv">2500</span>, <span class="dv">170000</span>)) <span class="sc">+</span></span>
-<span id="cb141-6"><a href="#cb141-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylim</span>(<span class="dv">65</span>,<span class="dv">87</span>) <span class="sc">+</span> </span>
-<span id="cb141-7"><a href="#cb141-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">xlab</span>(<span class="st">"GDP per capita, 2022 (purchasing power parity, 2017 US dollars)"</span>) <span class="sc">+</span></span>
-<span id="cb141-8"><a href="#cb141-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylab</span>(<span class="st">"life expectancy at birth, 2022"</span>) <span class="sc">+</span></span>
-<span id="cb141-9"><a href="#cb141-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_text</span>(<span class="fu">aes</span>(<span class="at">x=</span>gdpPercap, <span class="at">y=</span>lifeExp, <span class="at">label =</span> country, <span class="at">size =</span> <span class="dv">5</span><span class="sc">*</span><span class="dv">10</span><span class="sc">^</span><span class="dv">6</span>, <span class="at">vjust =</span> <span class="sc">-</span><span class="dv">1</span>)) <span class="sc">+</span></span>
-<span id="cb141-10"><a href="#cb141-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_light</span>() <span class="sc">+</span></span>
-<span id="cb141-11"><a href="#cb141-11" aria-hidden="true" tabindex="-1"></a>  <span class="co">#https://www.datanovia.com/en/blog/how-to-remove-legend-from-a-ggplot/</span></span>
-<span id="cb141-12"><a href="#cb141-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">"none"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb148"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb148-1"><a href="#cb148-1" aria-hidden="true" tabindex="-1"></a>asean_2022 <span class="sc">%&gt;%</span></span>
+<span id="cb148-2"><a href="#cb148-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x=</span>gdpPercap, <span class="at">y=</span>lifeExp, <span class="at">size=</span>pop)) <span class="sc">+</span></span>
+<span id="cb148-3"><a href="#cb148-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">col =</span> <span class="st">"dodgerblue"</span>, <span class="at">alpha=</span><span class="fl">0.5</span>) <span class="sc">+</span></span>
+<span id="cb148-4"><a href="#cb148-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_size</span>(<span class="at">range =</span> <span class="fu">c</span>(<span class="dv">2</span>, <span class="dv">24</span>), <span class="at">name=</span><span class="st">"Population"</span>) <span class="sc">+</span></span>
+<span id="cb148-5"><a href="#cb148-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_log10</span>(<span class="at">limits =</span> <span class="fu">c</span>(<span class="dv">2500</span>, <span class="dv">170000</span>)) <span class="sc">+</span></span>
+<span id="cb148-6"><a href="#cb148-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylim</span>(<span class="dv">65</span>,<span class="dv">87</span>) <span class="sc">+</span> </span>
+<span id="cb148-7"><a href="#cb148-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">xlab</span>(<span class="st">"GDP per capita, 2022 (purchasing power parity, 2017 US dollars)"</span>) <span class="sc">+</span></span>
+<span id="cb148-8"><a href="#cb148-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylab</span>(<span class="st">"life expectancy at birth, 2022"</span>) <span class="sc">+</span></span>
+<span id="cb148-9"><a href="#cb148-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_text</span>(<span class="fu">aes</span>(<span class="at">x=</span>gdpPercap, <span class="at">y=</span>lifeExp, <span class="at">label =</span> country, <span class="at">size =</span> <span class="dv">5</span><span class="sc">*</span><span class="dv">10</span><span class="sc">^</span><span class="dv">6</span>, <span class="at">vjust =</span> <span class="sc">-</span><span class="dv">1</span>)) <span class="sc">+</span></span>
+<span id="cb148-10"><a href="#cb148-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_light</span>() <span class="sc">+</span></span>
+<span id="cb148-11"><a href="#cb148-11" aria-hidden="true" tabindex="-1"></a>  <span class="co">#https://www.datanovia.com/en/blog/how-to-remove-legend-from-a-ggplot/</span></span>
+<span id="cb148-12"><a href="#cb148-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">"none"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="introduction_to_R_files/figure-html/unnamed-chunk-67-1.png" class="img-fluid figure-img" width="672"></p>
+<p><img src="introduction_to_R_files/figure-html/unnamed-chunk-70-1.png" class="img-fluid figure-img" width="672"></p>
 </figure>
 </div>
 </div>
 </div>
 <p>Make a rough match of the plot at <a href="https://www.gapminder.org/tools/" class="uri">https://www.gapminder.org/tools/</a>:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb142"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb142-1"><a href="#cb142-1" aria-hidden="true" tabindex="-1"></a>world_2022 <span class="ot">&lt;-</span> big_gapminder_dataset <span class="sc">%&gt;%</span></span>
-<span id="cb142-2"><a href="#cb142-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(year <span class="sc">==</span> <span class="st">"2022"</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb142-3"><a href="#cb142-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(country <span class="sc">!=</span> <span class="st">"Monaco"</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb142-4"><a href="#cb142-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(pop))</span>
-<span id="cb142-5"><a href="#cb142-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb142-6"><a href="#cb142-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Monaco has a very high GDP per capita, and it doesn't appear in the plot</span></span>
-<span id="cb142-7"><a href="#cb142-7" aria-hidden="true" tabindex="-1"></a><span class="co"># at https://www.gapminder.org/tools/. </span></span>
-<span id="cb142-8"><a href="#cb142-8" aria-hidden="true" tabindex="-1"></a><span class="co"># So remove the data for Monaco with the != (not equal to) operator.</span></span>
-<span id="cb142-9"><a href="#cb142-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb142-10"><a href="#cb142-10" aria-hidden="true" tabindex="-1"></a><span class="co"># arrange(desc(pop)) arranges the countries in order from largest population</span></span>
-<span id="cb142-11"><a href="#cb142-11" aria-hidden="true" tabindex="-1"></a><span class="co"># to smallest population. This means that the circles get plotted in order </span></span>
-<span id="cb142-12"><a href="#cb142-12" aria-hidden="true" tabindex="-1"></a><span class="co"># from largest to smallest, so the larger circles don't hide smaller circles.</span></span>
-<span id="cb142-13"><a href="#cb142-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb142-14"><a href="#cb142-14" aria-hidden="true" tabindex="-1"></a>world_2022 <span class="sc">%&gt;%</span></span>
-<span id="cb142-15"><a href="#cb142-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x=</span>gdpPercap, <span class="at">y=</span>lifeExp, <span class="at">size=</span>pop, <span class="at">col=</span>continent)) <span class="sc">+</span></span>
-<span id="cb142-16"><a href="#cb142-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">alpha=</span><span class="fl">0.5</span>) <span class="sc">+</span></span>
-<span id="cb142-17"><a href="#cb142-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_size</span>(<span class="at">range =</span> <span class="fu">c</span>(.<span class="dv">1</span>, <span class="dv">24</span>), <span class="at">name=</span><span class="st">"Population"</span>) <span class="sc">+</span></span>
-<span id="cb142-18"><a href="#cb142-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_continuous</span>(<span class="at">trans=</span><span class="st">'log10'</span>) <span class="sc">+</span></span>
-<span id="cb142-19"><a href="#cb142-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">guides</span>(<span class="at">size =</span> <span class="st">"none"</span>) <span class="sc">+</span> </span>
-<span id="cb142-20"><a href="#cb142-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_light</span>() <span class="sc">+</span></span>
-<span id="cb142-21"><a href="#cb142-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">xlab</span>(<span class="st">"GDP per capita, 2022 (purchasing power parity, 2017 US dollars)"</span>) <span class="sc">+</span></span>
-<span id="cb142-22"><a href="#cb142-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylab</span>(<span class="st">"life expectancy at birth, 2022"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb149"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb149-1"><a href="#cb149-1" aria-hidden="true" tabindex="-1"></a>world_2022 <span class="ot">&lt;-</span> big_gapminder_dataset <span class="sc">%&gt;%</span></span>
+<span id="cb149-2"><a href="#cb149-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(year <span class="sc">==</span> <span class="st">"2022"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb149-3"><a href="#cb149-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(country <span class="sc">!=</span> <span class="st">"Monaco"</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb149-4"><a href="#cb149-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(pop))</span>
+<span id="cb149-5"><a href="#cb149-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb149-6"><a href="#cb149-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Monaco has a very high GDP per capita, and it doesn't appear in the plot</span></span>
+<span id="cb149-7"><a href="#cb149-7" aria-hidden="true" tabindex="-1"></a><span class="co"># at https://www.gapminder.org/tools/. </span></span>
+<span id="cb149-8"><a href="#cb149-8" aria-hidden="true" tabindex="-1"></a><span class="co"># So remove the data for Monaco with the != (not equal to) operator.</span></span>
+<span id="cb149-9"><a href="#cb149-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb149-10"><a href="#cb149-10" aria-hidden="true" tabindex="-1"></a><span class="co"># arrange(desc(pop)) arranges the countries in order from largest population</span></span>
+<span id="cb149-11"><a href="#cb149-11" aria-hidden="true" tabindex="-1"></a><span class="co"># to smallest population. This means that the circles get plotted in order </span></span>
+<span id="cb149-12"><a href="#cb149-12" aria-hidden="true" tabindex="-1"></a><span class="co"># from largest to smallest, so the larger circles don't hide smaller circles.</span></span>
+<span id="cb149-13"><a href="#cb149-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb149-14"><a href="#cb149-14" aria-hidden="true" tabindex="-1"></a>world_2022 <span class="sc">%&gt;%</span></span>
+<span id="cb149-15"><a href="#cb149-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x=</span>gdpPercap, <span class="at">y=</span>lifeExp, <span class="at">size=</span>pop, <span class="at">col=</span>continent)) <span class="sc">+</span></span>
+<span id="cb149-16"><a href="#cb149-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">alpha=</span><span class="fl">0.5</span>) <span class="sc">+</span></span>
+<span id="cb149-17"><a href="#cb149-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_size</span>(<span class="at">range =</span> <span class="fu">c</span>(.<span class="dv">1</span>, <span class="dv">24</span>), <span class="at">name=</span><span class="st">"Population"</span>) <span class="sc">+</span></span>
+<span id="cb149-18"><a href="#cb149-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_continuous</span>(<span class="at">trans=</span><span class="st">'log10'</span>) <span class="sc">+</span></span>
+<span id="cb149-19"><a href="#cb149-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">guides</span>(<span class="at">size =</span> <span class="st">"none"</span>) <span class="sc">+</span> </span>
+<span id="cb149-20"><a href="#cb149-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_light</span>() <span class="sc">+</span></span>
+<span id="cb149-21"><a href="#cb149-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">xlab</span>(<span class="st">"GDP per capita, 2022 (purchasing power parity, 2017 US dollars)"</span>) <span class="sc">+</span></span>
+<span id="cb149-22"><a href="#cb149-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylab</span>(<span class="st">"life expectancy at birth, 2022"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="introduction_to_R_files/figure-html/unnamed-chunk-68-1.png" class="img-fluid figure-img" width="672"></p>
+<p><img src="introduction_to_R_files/figure-html/unnamed-chunk-71-1.png" class="img-fluid figure-img" width="672"></p>
 </figure>
 </div>
 </div>
 </div>
 <p>There are a lot of circles here, and we can’t tell which plot is which. It would be nice to reproduce the feature of the plot at the <a href="https://www.gapminder.org/tools/">website</a> above, which shows the name of each country each circle represents when you “hover” the mouse over it. It is possible to do this with another R package called <code>plotly</code>. You’ll need to install it before running the code below.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb143"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb143-1"><a href="#cb143-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(plotly)</span>
-<span id="cb143-2"><a href="#cb143-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb143-3"><a href="#cb143-3" aria-hidden="true" tabindex="-1"></a>continent_colours <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
-<span id="cb143-4"><a href="#cb143-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">continent =</span> <span class="fu">c</span>(<span class="st">"Africa"</span>, <span class="st">"Americas"</span>, <span class="st">"Asia"</span>, <span class="st">"Europe"</span>),</span>
-<span id="cb143-5"><a href="#cb143-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">colour =</span> <span class="fu">c</span>(<span class="st">"rgba(95,210,230,1)"</span>, <span class="st">"rgba(154,231,71,1)"</span>,</span>
-<span id="cb143-6"><a href="#cb143-6" aria-hidden="true" tabindex="-1"></a>             <span class="st">"rgba(237,100,117,1)"</span>, <span class="st">"rgba(251,230,77,1)"</span>)</span>
-<span id="cb143-7"><a href="#cb143-7" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb143-8"><a href="#cb143-8" aria-hidden="true" tabindex="-1"></a><span class="co"># This command makes a small data.frame assigning colours to continents.</span></span>
-<span id="cb143-9"><a href="#cb143-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb143-10"><a href="#cb143-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Plotly doesn't handle rows with missing data in the same way as ggplot2,</span></span>
-<span id="cb143-11"><a href="#cb143-11" aria-hidden="true" tabindex="-1"></a><span class="co"># so include a command to remove rows with missing data.</span></span>
-<span id="cb143-12"><a href="#cb143-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb143-13"><a href="#cb143-13" aria-hidden="true" tabindex="-1"></a><span class="co"># is.na() tests whether the thing in brackets is missing.</span></span>
-<span id="cb143-14"><a href="#cb143-14" aria-hidden="true" tabindex="-1"></a><span class="co"># ! means "not". So !is.na() tests whether something is not missing.</span></span>
-<span id="cb143-15"><a href="#cb143-15" aria-hidden="true" tabindex="-1"></a><span class="co"># &amp; means "and". So the command</span></span>
-<span id="cb143-16"><a href="#cb143-16" aria-hidden="true" tabindex="-1"></a><span class="co">#   filter(!is.na(lifeExp) &amp; !is.na(gdpPercap) &amp; !is.na(pop))</span></span>
-<span id="cb143-17"><a href="#cb143-17" aria-hidden="true" tabindex="-1"></a><span class="co"># means: just keep the rows where </span></span>
-<span id="cb143-18"><a href="#cb143-18" aria-hidden="true" tabindex="-1"></a><span class="co">#    lifeExp is not missing, AND</span></span>
-<span id="cb143-19"><a href="#cb143-19" aria-hidden="true" tabindex="-1"></a><span class="co">#    gdpPercap is not missing, AND</span></span>
-<span id="cb143-20"><a href="#cb143-20" aria-hidden="true" tabindex="-1"></a><span class="co">#    pop is not missing.</span></span>
-<span id="cb143-21"><a href="#cb143-21" aria-hidden="true" tabindex="-1"></a>world_2022v2 <span class="ot">&lt;-</span> world_2022 <span class="sc">%&gt;%</span></span>
-<span id="cb143-22"><a href="#cb143-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(lifeExp) <span class="sc">&amp;</span> <span class="sc">!</span><span class="fu">is.na</span>(gdpPercap) <span class="sc">&amp;</span> <span class="sc">!</span><span class="fu">is.na</span>(pop)) <span class="sc">%&gt;%</span></span>
-<span id="cb143-23"><a href="#cb143-23" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(continent_colours, <span class="at">by =</span> <span class="st">"continent"</span>)</span>
-<span id="cb143-24"><a href="#cb143-24" aria-hidden="true" tabindex="-1"></a><span class="co"># left_join() is another dplyr function. It adds information from</span></span>
-<span id="cb143-25"><a href="#cb143-25" aria-hidden="true" tabindex="-1"></a><span class="co"># the small continent_colours table we just made to the world_2022</span></span>
-<span id="cb143-26"><a href="#cb143-26" aria-hidden="true" tabindex="-1"></a><span class="co"># table. The two tables are matched using values of "continent".</span></span>
-<span id="cb143-27"><a href="#cb143-27" aria-hidden="true" tabindex="-1"></a><span class="co"># This adds a column of colours to the world_2022 table, used for</span></span>
-<span id="cb143-28"><a href="#cb143-28" aria-hidden="true" tabindex="-1"></a><span class="co"># plotting below. So the dplyr cheatsheet mentioned above </span></span>
-<span id="cb143-29"><a href="#cb143-29" aria-hidden="true" tabindex="-1"></a><span class="co"># (https://www.rstudio.com/wp-content/uploads/2015/02/data-wrangling-cheatsheet.pdf) </span></span>
-<span id="cb143-30"><a href="#cb143-30" aria-hidden="true" tabindex="-1"></a><span class="co"># for a nice illustration of how left_join() works.</span></span>
-<span id="cb143-31"><a href="#cb143-31" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb143-32"><a href="#cb143-32" aria-hidden="true" tabindex="-1"></a>fig <span class="ot">&lt;-</span> <span class="fu">plot_ly</span>(world_2022v2, <span class="at">x =</span> <span class="sc">~</span>gdpPercap, <span class="at">y =</span> <span class="sc">~</span>lifeExp, <span class="at">text =</span> <span class="sc">~</span>country,</span>
-<span id="cb143-33"><a href="#cb143-33" aria-hidden="true" tabindex="-1"></a>               <span class="at">type =</span> <span class="st">"scatter"</span>, <span class="at">mode =</span> <span class="st">"markers"</span>,</span>
-<span id="cb143-34"><a href="#cb143-34" aria-hidden="true" tabindex="-1"></a>               <span class="at">marker =</span> <span class="fu">list</span>(<span class="at">size =</span> <span class="sc">~</span>(<span class="fu">sqrt</span>((pop)<span class="sc">/</span><span class="dv">300000</span>)<span class="sc">+</span><span class="fl">0.2</span>), </span>
-<span id="cb143-35"><a href="#cb143-35" aria-hidden="true" tabindex="-1"></a>                             <span class="at">opacity =</span> <span class="fl">0.8</span>, <span class="at">color =</span> <span class="sc">~</span>colour))</span>
-<span id="cb143-36"><a href="#cb143-36" aria-hidden="true" tabindex="-1"></a><span class="co"># https://plotly.com/r/bubble-charts/</span></span>
-<span id="cb143-37"><a href="#cb143-37" aria-hidden="true" tabindex="-1"></a>fig <span class="ot">&lt;-</span> fig <span class="sc">%&gt;%</span> </span>
-<span id="cb143-38"><a href="#cb143-38" aria-hidden="true" tabindex="-1"></a>  <span class="fu">layout</span>(fig, </span>
-<span id="cb143-39"><a href="#cb143-39" aria-hidden="true" tabindex="-1"></a>         <span class="at">title =</span> <span class="st">"2022 Gapminder data"</span>,</span>
-<span id="cb143-40"><a href="#cb143-40" aria-hidden="true" tabindex="-1"></a>         <span class="at">xaxis =</span> <span class="fu">list</span>(</span>
-<span id="cb143-41"><a href="#cb143-41" aria-hidden="true" tabindex="-1"></a>           <span class="at">type =</span> <span class="st">"log"</span>, </span>
-<span id="cb143-42"><a href="#cb143-42" aria-hidden="true" tabindex="-1"></a>           <span class="at">title =</span> <span class="st">"GDP per capita (purchasing power parity, 2017 US dollars)"</span>),</span>
-<span id="cb143-43"><a href="#cb143-43" aria-hidden="true" tabindex="-1"></a>         <span class="at">yaxis =</span> <span class="fu">list</span>(<span class="at">title =</span> <span class="st">"life expectancy at birth"</span>))</span>
-<span id="cb143-44"><a href="#cb143-44" aria-hidden="true" tabindex="-1"></a><span class="co"># https://plotly.com/r/figure-labels/</span></span>
-<span id="cb143-45"><a href="#cb143-45" aria-hidden="true" tabindex="-1"></a>fig</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb150"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb150-1"><a href="#cb150-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(plotly)</span>
+<span id="cb150-2"><a href="#cb150-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb150-3"><a href="#cb150-3" aria-hidden="true" tabindex="-1"></a>continent_colours <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb150-4"><a href="#cb150-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">continent =</span> <span class="fu">c</span>(<span class="st">"Africa"</span>, <span class="st">"Americas"</span>, <span class="st">"Asia"</span>, <span class="st">"Europe"</span>),</span>
+<span id="cb150-5"><a href="#cb150-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">colour =</span> <span class="fu">c</span>(<span class="st">"rgba(95,210,230,1)"</span>, <span class="st">"rgba(154,231,71,1)"</span>,</span>
+<span id="cb150-6"><a href="#cb150-6" aria-hidden="true" tabindex="-1"></a>             <span class="st">"rgba(237,100,117,1)"</span>, <span class="st">"rgba(251,230,77,1)"</span>)</span>
+<span id="cb150-7"><a href="#cb150-7" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb150-8"><a href="#cb150-8" aria-hidden="true" tabindex="-1"></a><span class="co"># This command makes a small data.frame assigning colours to continents.</span></span>
+<span id="cb150-9"><a href="#cb150-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb150-10"><a href="#cb150-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Plotly doesn't handle rows with missing data in the same way as ggplot2,</span></span>
+<span id="cb150-11"><a href="#cb150-11" aria-hidden="true" tabindex="-1"></a><span class="co"># so include a command to remove rows with missing data.</span></span>
+<span id="cb150-12"><a href="#cb150-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb150-13"><a href="#cb150-13" aria-hidden="true" tabindex="-1"></a><span class="co"># is.na() tests whether the thing in brackets is missing.</span></span>
+<span id="cb150-14"><a href="#cb150-14" aria-hidden="true" tabindex="-1"></a><span class="co"># ! means "not". So !is.na() tests whether something is not missing.</span></span>
+<span id="cb150-15"><a href="#cb150-15" aria-hidden="true" tabindex="-1"></a><span class="co"># &amp; means "and". So the command</span></span>
+<span id="cb150-16"><a href="#cb150-16" aria-hidden="true" tabindex="-1"></a><span class="co">#   filter(!is.na(lifeExp) &amp; !is.na(gdpPercap) &amp; !is.na(pop))</span></span>
+<span id="cb150-17"><a href="#cb150-17" aria-hidden="true" tabindex="-1"></a><span class="co"># means: just keep the rows where </span></span>
+<span id="cb150-18"><a href="#cb150-18" aria-hidden="true" tabindex="-1"></a><span class="co">#    lifeExp is not missing, AND</span></span>
+<span id="cb150-19"><a href="#cb150-19" aria-hidden="true" tabindex="-1"></a><span class="co">#    gdpPercap is not missing, AND</span></span>
+<span id="cb150-20"><a href="#cb150-20" aria-hidden="true" tabindex="-1"></a><span class="co">#    pop is not missing.</span></span>
+<span id="cb150-21"><a href="#cb150-21" aria-hidden="true" tabindex="-1"></a>world_2022v2 <span class="ot">&lt;-</span> world_2022 <span class="sc">%&gt;%</span></span>
+<span id="cb150-22"><a href="#cb150-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(lifeExp) <span class="sc">&amp;</span> <span class="sc">!</span><span class="fu">is.na</span>(gdpPercap) <span class="sc">&amp;</span> <span class="sc">!</span><span class="fu">is.na</span>(pop)) <span class="sc">%&gt;%</span></span>
+<span id="cb150-23"><a href="#cb150-23" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(continent_colours, <span class="at">by =</span> <span class="st">"continent"</span>)</span>
+<span id="cb150-24"><a href="#cb150-24" aria-hidden="true" tabindex="-1"></a><span class="co"># left_join() is another dplyr function. It adds information from</span></span>
+<span id="cb150-25"><a href="#cb150-25" aria-hidden="true" tabindex="-1"></a><span class="co"># the small continent_colours table we just made to the world_2022</span></span>
+<span id="cb150-26"><a href="#cb150-26" aria-hidden="true" tabindex="-1"></a><span class="co"># table. The two tables are matched using values of "continent".</span></span>
+<span id="cb150-27"><a href="#cb150-27" aria-hidden="true" tabindex="-1"></a><span class="co"># This adds a column of colours to the world_2022 table, used for</span></span>
+<span id="cb150-28"><a href="#cb150-28" aria-hidden="true" tabindex="-1"></a><span class="co"># plotting below. So the dplyr cheatsheet mentioned above </span></span>
+<span id="cb150-29"><a href="#cb150-29" aria-hidden="true" tabindex="-1"></a><span class="co"># (https://www.rstudio.com/wp-content/uploads/2015/02/data-wrangling-cheatsheet.pdf) </span></span>
+<span id="cb150-30"><a href="#cb150-30" aria-hidden="true" tabindex="-1"></a><span class="co"># for a nice illustration of how left_join() works.</span></span>
+<span id="cb150-31"><a href="#cb150-31" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb150-32"><a href="#cb150-32" aria-hidden="true" tabindex="-1"></a>fig <span class="ot">&lt;-</span> <span class="fu">plot_ly</span>(world_2022v2, <span class="at">x =</span> <span class="sc">~</span>gdpPercap, <span class="at">y =</span> <span class="sc">~</span>lifeExp, <span class="at">text =</span> <span class="sc">~</span>country,</span>
+<span id="cb150-33"><a href="#cb150-33" aria-hidden="true" tabindex="-1"></a>               <span class="at">type =</span> <span class="st">"scatter"</span>, <span class="at">mode =</span> <span class="st">"markers"</span>,</span>
+<span id="cb150-34"><a href="#cb150-34" aria-hidden="true" tabindex="-1"></a>               <span class="at">marker =</span> <span class="fu">list</span>(<span class="at">size =</span> <span class="sc">~</span>(<span class="fu">sqrt</span>((pop)<span class="sc">/</span><span class="dv">300000</span>)<span class="sc">+</span><span class="fl">0.2</span>), </span>
+<span id="cb150-35"><a href="#cb150-35" aria-hidden="true" tabindex="-1"></a>                             <span class="at">opacity =</span> <span class="fl">0.8</span>, <span class="at">color =</span> <span class="sc">~</span>colour))</span>
+<span id="cb150-36"><a href="#cb150-36" aria-hidden="true" tabindex="-1"></a><span class="co"># https://plotly.com/r/bubble-charts/</span></span>
+<span id="cb150-37"><a href="#cb150-37" aria-hidden="true" tabindex="-1"></a>fig <span class="ot">&lt;-</span> fig <span class="sc">%&gt;%</span> </span>
+<span id="cb150-38"><a href="#cb150-38" aria-hidden="true" tabindex="-1"></a>  <span class="fu">layout</span>(fig, </span>
+<span id="cb150-39"><a href="#cb150-39" aria-hidden="true" tabindex="-1"></a>         <span class="at">title =</span> <span class="st">"2022 Gapminder data"</span>,</span>
+<span id="cb150-40"><a href="#cb150-40" aria-hidden="true" tabindex="-1"></a>         <span class="at">xaxis =</span> <span class="fu">list</span>(</span>
+<span id="cb150-41"><a href="#cb150-41" aria-hidden="true" tabindex="-1"></a>           <span class="at">type =</span> <span class="st">"log"</span>, </span>
+<span id="cb150-42"><a href="#cb150-42" aria-hidden="true" tabindex="-1"></a>           <span class="at">title =</span> <span class="st">"GDP per capita (purchasing power parity, 2017 US dollars)"</span>),</span>
+<span id="cb150-43"><a href="#cb150-43" aria-hidden="true" tabindex="-1"></a>         <span class="at">yaxis =</span> <span class="fu">list</span>(<span class="at">title =</span> <span class="st">"life expectancy at birth"</span>))</span>
+<span id="cb150-44"><a href="#cb150-44" aria-hidden="true" tabindex="-1"></a><span class="co"># https://plotly.com/r/figure-labels/</span></span>
+<span id="cb150-45"><a href="#cb150-45" aria-hidden="true" tabindex="-1"></a>fig</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<div class="plotly html-widget html-fill-item" id="htmlwidget-c2cfd5e12b431fe5fa6b" style="width:100%;height:464px;"></div>
-<script type="application/json" data-for="htmlwidget-c2cfd5e12b431fe5fa6b">{"x":{"visdat":{"aac843d61e65":["function () ","plotlyVisDat"]},"cur_data":"aac843d61e65","attrs":{"aac843d61e65":{"x":{},"y":{},"text":{},"mode":"markers","marker":{"size":{},"opacity":0.80000000000000004,"color":{}},"alpha_stroke":1,"sizes":[10,100],"spans":[1,20],"type":"scatter"}},"layout":{"margin":{"b":40,"l":60,"t":25,"r":10},"title":"2022 Gapminder data","xaxis":{"domain":[0,1],"automargin":true,"type":"log","title":"GDP per capita (purchasing power parity, 2017 US dollars)"},"yaxis":{"domain":[0,1],"automargin":true,"title":"life expectancy at birth"},"hovermode":"closest","showlegend":false},"source":"A","config":{"modeBarButtonsToAdd":["hoverclosest","hovercompare"],"showSendToCloud":false},"data":[{"x":[18200,7100,64700,12400,5450,4960,15100,6260,27600,19500,41600,2380,8580,12800,1130,11400,15300,33000,53600,17500,46800,2620,46000,13500,43800,4120,4880,15700,45500,39800,2280,3570,22400,11200,9200,1430,36800,10700,49000,8060,50000,5910,8070,12700,28300,1720,5500,1240,4000,1500,6180,5540,3730,51000,1270,1620,58700,2160,2130,3350,12200,1470,3300,32700.000000000004,25900,26100,10900,9160,1410,58600,1160,3560,4530,2140,2700,2360,3440,708,10600,8200,53200,2800,9320,10600,19300,386,41700,54800,15000,31500,5710,35700,3770,35300,4140,19100,74300,44300,56300,2210,71000,1640,7950,20500,5820,19800,26800,13500,5190,14700,9400,108000,3210,59700,33200,819,49600,13200,67500,1460,5720,44900,22000,114000,5440,35300,33300,49200,34000,17000,1950,24400,12100,12900,16700,15500,10000,16000,39600,2130,97100,15500,9490,13900,2280,42200,1860,17100,32700.000000000004,14700,23500,51900,4090,37800,22800,43600,9130,4990,12000,3250,34400,11300,2250,116000,22100,14900,7690,48200,21000,58700,34200,9700,55000,2790,15100,4010,5120,15000,2000,14400,3260,29800,6040,14600,21500,56000,11500,28800,6120,64500,13500,11100,4590],"y":[78.200000000000003,67.599999999999994,78,69.099999999999994,65.5,65.200000000000003,73.900000000000006,75.5,69.200000000000003,76.299999999999997,85.200000000000003,68.599999999999994,72.200000000000003,69.799999999999997,64.5,75,76.200000000000003,79,80.599999999999994,79.099999999999994,81.5,67,83.400000000000006,60.5,83.599999999999994,70.099999999999994,65.599999999999994,77,83.299999999999997,83.5,66.900000000000006,70.200000000000003,75.400000000000006,76.799999999999997,73,62.600000000000001,77.200000000000003,67.900000000000006,82.700000000000003,74,75.099999999999994,64.5,68.799999999999997,77.299999999999997,75.5,66.299999999999997,65.5,56.899999999999999,72,64.799999999999997,74,63.799999999999997,62.700000000000003,83.400000000000006,61.700000000000003,73.5,80.900000000000006,61.399999999999999,61.600000000000001,74.400000000000006,77.900000000000006,63.5,62.200000000000003,73.200000000000003,79.299999999999997,69.799999999999997,77,68.200000000000003,60.100000000000001,82.200000000000003,57.5,67.900000000000006,69.099999999999994,59.100000000000001,60.5,69.400000000000006,64,63.5,75.900000000000006,68.900000000000006,81.900000000000006,63.299999999999997,76.299999999999997,79.200000000000003,73.799999999999997,63.399999999999999,78.299999999999997,83.299999999999997,71.400000000000006,80.299999999999997,69.900000000000006,82.299999999999997,65.099999999999994,75.099999999999994,70,73,73.400000000000006,82.799999999999997,82.700000000000003,65.799999999999997,84.5,61.899999999999999,69.799999999999997,73.099999999999994,76,75.599999999999994,69.900000000000006,73.299999999999997,72.700000000000003,71.200000000000003,74.599999999999994,85.200000000000003,65.799999999999997,81.599999999999994,75.200000000000003,51.799999999999997,82.299999999999997,72,83.299999999999997,66.099999999999994,73,82.200000000000003,78,82.5,69.700000000000003,70.099999999999994,79,82.099999999999994,79.200000000000003,71.5,63.100000000000001,78,68.900000000000006,71.900000000000006,75,76.099999999999994,75,73.700000000000003,74.299999999999997,65.799999999999997,76.799999999999997,62.700000000000003,60,66.900000000000006,50.700000000000003,81.900000000000006,59.899999999999999,71.099999999999994,76.299999999999997,65.5,75.400000000000006,76.299999999999997,71.400000000000006,78.5,74.299999999999997,81.299999999999997,54.200000000000003,66.599999999999994,68.799999999999997,68.299999999999997,64.299999999999997,74,59.5,83.400000000000006,75.700000000000003,70.700000000000003,72.5,83.099999999999994,79.799999999999997,74.200000000000003,76.599999999999994,71.5,84.5,66,76.599999999999994,71.200000000000003,70.900000000000006,72.900000000000006,61.200000000000003,73.799999999999997,64,71.200000000000003,73.400000000000006,69.099999999999994,76.799999999999997,82.700000000000003,71.799999999999997,72.599999999999994,65.900000000000006,82.599999999999994,68.099999999999994,63.899999999999999,68.5],"text":["China","India","USA","Indonesia","Pakistan","Nigeria","Brazil","Bangladesh","Russia","Mexico","Japan","Ethiopia","Philippines","Egypt","Congo, Dem. Rep.","Vietnam","Iran","Turkey","Germany","Thailand","UK","Tanzania","France","South Africa","Italy","Myanmar","Kenya","Colombia","South Korea","Spain","Uganda","Sudan","Argentina","Algeria","Iraq","Afghanistan","Poland","Ukraine","Canada","Morocco","Saudi Arabia","Angola","Uzbekistan","Peru","Malaysia","Yemen","Ghana","Mozambique","Nepal","Madagascar","Venezuela","Cote d'Ivoire","Cameroon","Australia","Niger","North Korea","Taiwan","Burkina Faso","Mali","Syria","Sri Lanka","Malawi","Zambia","Romania","Chile","Kazakhstan","Ecuador","Guatemala","Chad","Netherlands","Somalia","Senegal","Cambodia","Zimbabwe","Guinea","Rwanda","Benin","Burundi","Tunisia","Bolivia","Belgium","Haiti","Jordan","Cuba","Dominican Republic","South Sudan","Czech Republic","Sweden","Azerbaijan","Greece","Honduras","Portugal","Papua New Guinea","Hungary","Tajikistan","Belarus","UAE","Israel","Austria","Togo","Switzerland","Sierra Leone","Lao","Serbia","Nicaragua","Libya","Bulgaria","Paraguay","Kyrgyz Republic","Turkmenistan","El Salvador","Singapore","Congo, Rep.","Denmark","Slovak Republic","Central African Republic","Finland","Lebanon","Norway","Liberia","Palestine","New Zealand","Costa Rica","Ireland","Mauritania","Oman","Panama","Kuwait","Croatia","Georgia","Eritrea","Uruguay","Mongolia","Moldova","Bosnia and Herzegovina","Albania","Jamaica","Armenia","Lithuania","Gambia","Qatar","Botswana","Namibia","Gabon","Lesotho","Slovenia","Guinea-Bissau","North Macedonia","Latvia","Equatorial Guinea","Trinidad and Tobago","Bahrain","Timor-Leste","Estonia","Mauritius","Cyprus","Eswatini","Djibouti","Fiji","Comoros","Guyana","Bhutan","Solomon Islands","Luxembourg","Montenegro","Suriname","Cape Verde","Malta","Maldives","Brunei","Bahamas","Belize","Iceland","Vanuatu","Barbados","Sao Tome and Principe","Samoa","St. Lucia","Kiribati","Grenada","Micronesia, Fed. Sts.","Seychelles","Tonga","St. Vincent and the Grenadines","Antigua and Barbuda","Andorra","Dominica","St. Kitts and Nevis","Marshall Islands","San Marino","Palau","Nauru","Tuvalu"],"mode":"markers","marker":{"color":["rgba(237,100,117,1)","rgba(237,100,117,1)","rgba(154,231,71,1)","rgba(237,100,117,1)","rgba(237,100,117,1)","rgba(95,210,230,1)","rgba(154,231,71,1)","rgba(237,100,117,1)","rgba(251,230,77,1)","rgba(154,231,71,1)","rgba(237,100,117,1)","rgba(95,210,230,1)","rgba(237,100,117,1)","rgba(95,210,230,1)","rgba(95,210,230,1)","rgba(237,100,117,1)","rgba(237,100,117,1)","rgba(251,230,77,1)","rgba(251,230,77,1)","rgba(237,100,117,1)","rgba(251,230,77,1)","rgba(95,210,230,1)","rgba(251,230,77,1)","rgba(95,210,230,1)","rgba(251,230,77,1)","rgba(237,100,117,1)","rgba(95,210,230,1)","rgba(154,231,71,1)","rgba(237,100,117,1)","rgba(251,230,77,1)","rgba(95,210,230,1)","rgba(95,210,230,1)","rgba(154,231,71,1)","rgba(95,210,230,1)","rgba(237,100,117,1)","rgba(237,100,117,1)","rgba(251,230,77,1)","rgba(251,230,77,1)","rgba(154,231,71,1)","rgba(95,210,230,1)","rgba(237,100,117,1)","rgba(95,210,230,1)","rgba(237,100,117,1)","rgba(154,231,71,1)","rgba(237,100,117,1)","rgba(237,100,117,1)","rgba(95,210,230,1)","rgba(95,210,230,1)","rgba(237,100,117,1)","rgba(95,210,230,1)","rgba(154,231,71,1)","rgba(95,210,230,1)","rgba(95,210,230,1)","rgba(237,100,117,1)","rgba(95,210,230,1)","rgba(237,100,117,1)","rgba(237,100,117,1)","rgba(95,210,230,1)","rgba(95,210,230,1)","rgba(237,100,117,1)","rgba(237,100,117,1)","rgba(95,210,230,1)","rgba(95,210,230,1)","rgba(251,230,77,1)","rgba(154,231,71,1)","rgba(237,100,117,1)","rgba(154,231,71,1)","rgba(154,231,71,1)","rgba(95,210,230,1)","rgba(251,230,77,1)","rgba(95,210,230,1)","rgba(95,210,230,1)","rgba(237,100,117,1)","rgba(95,210,230,1)","rgba(95,210,230,1)","rgba(95,210,230,1)","rgba(95,210,230,1)","rgba(95,210,230,1)","rgba(95,210,230,1)","rgba(154,231,71,1)","rgba(251,230,77,1)","rgba(154,231,71,1)","rgba(237,100,117,1)","rgba(154,231,71,1)","rgba(154,231,71,1)","rgba(95,210,230,1)","rgba(251,230,77,1)","rgba(251,230,77,1)","rgba(251,230,77,1)","rgba(251,230,77,1)","rgba(154,231,71,1)","rgba(251,230,77,1)","rgba(237,100,117,1)","rgba(251,230,77,1)","rgba(237,100,117,1)","rgba(251,230,77,1)","rgba(237,100,117,1)","rgba(237,100,117,1)","rgba(251,230,77,1)","rgba(95,210,230,1)","rgba(251,230,77,1)","rgba(95,210,230,1)","rgba(237,100,117,1)","rgba(251,230,77,1)","rgba(154,231,71,1)","rgba(95,210,230,1)","rgba(251,230,77,1)","rgba(154,231,71,1)","rgba(237,100,117,1)","rgba(237,100,117,1)","rgba(154,231,71,1)","rgba(237,100,117,1)","rgba(95,210,230,1)","rgba(251,230,77,1)","rgba(251,230,77,1)","rgba(95,210,230,1)","rgba(251,230,77,1)","rgba(237,100,117,1)","rgba(251,230,77,1)","rgba(95,210,230,1)","rgba(237,100,117,1)","rgba(237,100,117,1)","rgba(154,231,71,1)","rgba(251,230,77,1)","rgba(95,210,230,1)","rgba(237,100,117,1)","rgba(154,231,71,1)","rgba(237,100,117,1)","rgba(251,230,77,1)","rgba(251,230,77,1)","rgba(95,210,230,1)","rgba(154,231,71,1)","rgba(237,100,117,1)","rgba(251,230,77,1)","rgba(251,230,77,1)","rgba(251,230,77,1)","rgba(154,231,71,1)","rgba(251,230,77,1)","rgba(251,230,77,1)","rgba(95,210,230,1)","rgba(237,100,117,1)","rgba(95,210,230,1)","rgba(95,210,230,1)","rgba(95,210,230,1)","rgba(95,210,230,1)","rgba(251,230,77,1)","rgba(95,210,230,1)","rgba(251,230,77,1)","rgba(251,230,77,1)","rgba(95,210,230,1)","rgba(154,231,71,1)","rgba(237,100,117,1)","rgba(237,100,117,1)","rgba(251,230,77,1)","rgba(95,210,230,1)","rgba(251,230,77,1)","rgba(95,210,230,1)","rgba(95,210,230,1)","rgba(237,100,117,1)","rgba(95,210,230,1)","rgba(154,231,71,1)","rgba(237,100,117,1)","rgba(237,100,117,1)","rgba(251,230,77,1)","rgba(251,230,77,1)","rgba(154,231,71,1)","rgba(95,210,230,1)","rgba(251,230,77,1)","rgba(237,100,117,1)","rgba(237,100,117,1)","rgba(154,231,71,1)","rgba(154,231,71,1)","rgba(251,230,77,1)","rgba(237,100,117,1)","rgba(154,231,71,1)","rgba(95,210,230,1)","rgba(237,100,117,1)","rgba(154,231,71,1)","rgba(237,100,117,1)","rgba(154,231,71,1)","rgba(237,100,117,1)","rgba(95,210,230,1)","rgba(237,100,117,1)","rgba(154,231,71,1)","rgba(154,231,71,1)","rgba(251,230,77,1)","rgba(154,231,71,1)","rgba(154,231,71,1)","rgba(237,100,117,1)","rgba(251,230,77,1)","rgba(237,100,117,1)","rgba(237,100,117,1)","rgba(237,100,117,1)"],"size":[69.241050590693263,68.999224801834316,33.76585566713095,30.531501776206202,28.247578623950172,27.218512172212591,26.970630673681683,24.074672772626645,22.184843263788199,20.855911179772889,20.530600909302539,20.448456731316586,19.8638416050035,19.435384061671343,18.365902124584949,18.292355660149212,17.385265006200321,17.062186493255652,16.873332000533065,15.659624833740306,15.199999999999999,14.976106839534333,14.874240468703425,14.330345596151094,14.223789311975086,13.6412301024373,13.616407864998738,13.352946437965905,13.340268896284682,12.796295751794121,12.743258481484519,12.703332889007367,12.515302134607444,12.43383286900171,12.379217270963407,11.904699910719625,11.732562594670796,11.703622617824932,11.528430311977619,11.380339887498948,11.215141094572203,11.093423092245461,10.939335795724674,10.84581294844754,10.830145812734649,10.798742063723097,10.767244989431571,10.688088481701515,10.282988974836115,10.133109617167559,9.9125348562223099,9.895359714832658,9.8436507609929542,9.5452305125841228,9.5452305125841228,9.5273790530888149,9.1256185593305883,8.8986589004665912,8.879477710861023,8.782928793055822,8.7244745683629468,8.4462112512353205,8.3649658092772601,8.3034971874288122,8.2829037686547604,8.2415587212098789,7.9459666924148342,7.9028133388608959,7.881145747868608,7.859416862050705,7.859416862050705,7.7938571665963448,7.6833147735478828,7.5711147958319938,7.0068592855540457,6.9823299831252683,6.8833125519211409,6.7574385243020005,6.6291005073286371,6.5770421565696635,6.4449979983983985,6.4182527020592097,6.3373175465073226,6.3101009266077872,6.3101009266077872,6.2277137733417085,6.1160797830996163,6.1160797830996163,6.0878405775518978,6.0878405775518978,6.0878405775518978,6.0594652770823156,6.0022983951764033,5.9648359329067935,5.959050847723665,5.8361925682739644,5.8095157247900344,5.6893836933970405,5.6589376255824728,5.6313902456001079,5.5975302994363387,5.5572380943915496,5.2099900199501397,5.1057789051960611,5.0131763593978844,4.9644516998286381,4.9539457296018856,4.9539457296018856,4.9010637094172633,4.8296148147911113,4.7971005354824836,4.664676173400859,4.6609416046390928,4.6271887242357312,4.5358966777357601,4.5127717305695656,4.4972859651955517,4.477849927241488,4.4544094772365295,4.4031734043061643,4.383300132670378,4.3593268686170843,4.355317877932646,4.2906397217713188,4.174921382870358,4.1072582032246947,4.0340579025361629,3.9727090178455766,3.8651512019742569,3.7308167138307629,3.7023801430836527,3.5763886032268268,3.5665016461206931,3.5015148038438357,3.481259920619924,3.2767948691238207,3.2713731999438518,3.2441200151549001,3.2276503540974919,3.205550421026627,3.2000000000000002,3.1608557321603272,3.1268868558020255,3.0225284173355398,2.9748873851023219,2.8583202716502516,2.8520432374554781,2.8394443859772207,2.6832774042918901,2.5593784492248521,2.458317958127243,2.4135943621178657,2.3134489978863146,2.3055482263138343,2.2816659994661328,2.2412414523193154,2.2000000000000002,2.1321835661585919,1.9606816861659009,1.8703293088490065,1.8421530582338135,1.8145174717749779,1.7534906930308058,1.6696938456699069,1.645683229480096,1.6352700094407324,1.6059397805975426,1.5329166015421469,1.5216151734399339,1.4233832869001712,1.3690451944500122,1.3618950038622251,1.3150485789118487,1.244030650891055,1.1695359714832658,1.0698658900466593,1.0602325267042627,0.97459666924148336,0.86080758671996693,0.84549722436790287,0.8164414002968976,0.79721576223896395,0.79721576223896395,0.78878405775518989,0.75916604570258617,0.71575187832910503,0.69227363664260277,0.59874804074753774,0.57237973450050506,0.53516165253998449,0.44562844569254056,0.40575065816014622,0.39407902170679521],"opacity":0.80000000000000004,"line":{"color":"rgba(31,119,180,1)"}},"type":"scatter","error_y":{"color":"rgba(31,119,180,1)"},"error_x":{"color":"rgba(31,119,180,1)"},"line":{"color":"rgba(31,119,180,1)"},"xaxis":"x","yaxis":"y","frame":null}],"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.20000000000000001,"selected":{"opacity":1},"debounce":0},"shinyEvents":["plotly_hover","plotly_click","plotly_selected","plotly_relayout","plotly_brushed","plotly_brushing","plotly_clickannotation","plotly_doubleclick","plotly_deselect","plotly_afterplot","plotly_sunburstclick"],"base_url":"https://plot.ly"},"evals":[],"jsHooks":[]}</script>
+<div class="plotly html-widget html-fill-item" id="htmlwidget-5f378131f2213423178f" style="width:100%;height:464px;"></div>
+<script type="application/json" data-for="htmlwidget-5f378131f2213423178f">{"x":{"visdat":{"f64845d96fa0":["function () ","plotlyVisDat"]},"cur_data":"f64845d96fa0","attrs":{"f64845d96fa0":{"x":{},"y":{},"text":{},"mode":"markers","marker":{"size":{},"opacity":0.80000000000000004,"color":{}},"alpha_stroke":1,"sizes":[10,100],"spans":[1,20],"type":"scatter"}},"layout":{"margin":{"b":40,"l":60,"t":25,"r":10},"title":"2022 Gapminder data","xaxis":{"domain":[0,1],"automargin":true,"type":"log","title":"GDP per capita (purchasing power parity, 2017 US dollars)"},"yaxis":{"domain":[0,1],"automargin":true,"title":"life expectancy at birth"},"hovermode":"closest","showlegend":false},"source":"A","config":{"modeBarButtonsToAdd":["hoverclosest","hovercompare"],"showSendToCloud":false},"data":[{"x":[18200,7100,64700,12400,5450,4960,15100,6260,27600,19500,41600,2380,8580,12800,1130,11400,15300,33000,53600,17500,46800,2620,46000,13500,43800,4120,4880,15700,45500,39800,2280,3570,22400,11200,9200,1430,36800,10700,49000,8060,50000,5910,8070,12700,28300,1720,5500,1240,4000,1500,6180,5540,3730,51000,1270,1620,58700,2160,2130,3350,12200,1470,3300,32700.000000000004,25900,26100,10900,9160,1410,58600,1160,3560,4530,2140,2700,2360,3440,708,10600,8200,53200,2800,9320,10600,19300,386,41700,54800,15000,31500,5710,35700,3770,35300,4140,19100,74300,44300,56300,2210,71000,1640,7950,20500,5820,19800,26800,13500,5190,14700,9400,108000,3210,59700,33200,819,49600,13200,67500,1460,5720,44900,22000,114000,5440,35300,33300,49200,34000,17000,1950,24400,12100,12900,16700,15500,10000,16000,39600,2130,97100,15500,9490,13900,2280,42200,1860,17100,32700.000000000004,14700,23500,51900,4090,37800,22800,43600,9130,4990,12000,3250,34400,11300,2250,116000,22100,14900,7690,48200,21000,58700,34200,9700,55000,2790,15100,4010,5120,15000,2000,14400,3260,29800,6040,14600,21500,56000,11500,28800,6120,64500,13500,11100,4590],"y":[78.200000000000003,67.599999999999994,78,69.099999999999994,65.5,65.200000000000003,73.900000000000006,75.5,69.200000000000003,76.299999999999997,85.200000000000003,68.599999999999994,72.200000000000003,69.799999999999997,64.5,75,76.200000000000003,79,80.599999999999994,79.099999999999994,81.5,67,83.400000000000006,60.5,83.599999999999994,70.099999999999994,65.599999999999994,77,83.299999999999997,83.5,66.900000000000006,70.200000000000003,75.400000000000006,76.799999999999997,73,62.600000000000001,77.200000000000003,67.900000000000006,82.700000000000003,74,75.099999999999994,64.5,68.799999999999997,77.299999999999997,75.5,66.299999999999997,65.5,56.899999999999999,72,64.799999999999997,74,63.799999999999997,62.700000000000003,83.400000000000006,61.700000000000003,73.5,80.900000000000006,61.399999999999999,61.600000000000001,74.400000000000006,77.900000000000006,63.5,62.200000000000003,73.200000000000003,79.299999999999997,69.799999999999997,77,68.200000000000003,60.100000000000001,82.200000000000003,57.5,67.900000000000006,69.099999999999994,59.100000000000001,60.5,69.400000000000006,64,63.5,75.900000000000006,68.900000000000006,81.900000000000006,63.299999999999997,76.299999999999997,79.200000000000003,73.799999999999997,63.399999999999999,78.299999999999997,83.299999999999997,71.400000000000006,80.299999999999997,69.900000000000006,82.299999999999997,65.099999999999994,75.099999999999994,70,73,73.400000000000006,82.799999999999997,82.700000000000003,65.799999999999997,84.5,61.899999999999999,69.799999999999997,73.099999999999994,76,75.599999999999994,69.900000000000006,73.299999999999997,72.700000000000003,71.200000000000003,74.599999999999994,85.200000000000003,65.799999999999997,81.599999999999994,75.200000000000003,51.799999999999997,82.299999999999997,72,83.299999999999997,66.099999999999994,73,82.200000000000003,78,82.5,69.700000000000003,70.099999999999994,79,82.099999999999994,79.200000000000003,71.5,63.100000000000001,78,68.900000000000006,71.900000000000006,75,76.099999999999994,75,73.700000000000003,74.299999999999997,65.799999999999997,76.799999999999997,62.700000000000003,60,66.900000000000006,50.700000000000003,81.900000000000006,59.899999999999999,71.099999999999994,76.299999999999997,65.5,75.400000000000006,76.299999999999997,71.400000000000006,78.5,74.299999999999997,81.299999999999997,54.200000000000003,66.599999999999994,68.799999999999997,68.299999999999997,64.299999999999997,74,59.5,83.400000000000006,75.700000000000003,70.700000000000003,72.5,83.099999999999994,79.799999999999997,74.200000000000003,76.599999999999994,71.5,84.5,66,76.599999999999994,71.200000000000003,70.900000000000006,72.900000000000006,61.200000000000003,73.799999999999997,64,71.200000000000003,73.400000000000006,69.099999999999994,76.799999999999997,82.700000000000003,71.799999999999997,72.599999999999994,65.900000000000006,82.599999999999994,68.099999999999994,63.899999999999999,68.5],"text":["China","India","USA","Indonesia","Pakistan","Nigeria","Brazil","Bangladesh","Russia","Mexico","Japan","Ethiopia","Philippines","Egypt","Congo, Dem. Rep.","Vietnam","Iran","Turkey","Germany","Thailand","UK","Tanzania","France","South Africa","Italy","Myanmar","Kenya","Colombia","South Korea","Spain","Uganda","Sudan","Argentina","Algeria","Iraq","Afghanistan","Poland","Ukraine","Canada","Morocco","Saudi Arabia","Angola","Uzbekistan","Peru","Malaysia","Yemen","Ghana","Mozambique","Nepal","Madagascar","Venezuela","Cote d'Ivoire","Cameroon","Australia","Niger","North Korea","Taiwan","Burkina Faso","Mali","Syria","Sri Lanka","Malawi","Zambia","Romania","Chile","Kazakhstan","Ecuador","Guatemala","Chad","Netherlands","Somalia","Senegal","Cambodia","Zimbabwe","Guinea","Rwanda","Benin","Burundi","Tunisia","Bolivia","Belgium","Haiti","Jordan","Cuba","Dominican Republic","South Sudan","Czech Republic","Sweden","Azerbaijan","Greece","Honduras","Portugal","Papua New Guinea","Hungary","Tajikistan","Belarus","UAE","Israel","Austria","Togo","Switzerland","Sierra Leone","Lao","Serbia","Nicaragua","Libya","Bulgaria","Paraguay","Kyrgyz Republic","Turkmenistan","El Salvador","Singapore","Congo, Rep.","Denmark","Slovak Republic","Central African Republic","Finland","Lebanon","Norway","Liberia","Palestine","New Zealand","Costa Rica","Ireland","Mauritania","Oman","Panama","Kuwait","Croatia","Georgia","Eritrea","Uruguay","Mongolia","Moldova","Bosnia and Herzegovina","Albania","Jamaica","Armenia","Lithuania","Gambia","Qatar","Botswana","Namibia","Gabon","Lesotho","Slovenia","Guinea-Bissau","North Macedonia","Latvia","Equatorial Guinea","Trinidad and Tobago","Bahrain","Timor-Leste","Estonia","Mauritius","Cyprus","Eswatini","Djibouti","Fiji","Comoros","Guyana","Bhutan","Solomon Islands","Luxembourg","Montenegro","Suriname","Cape Verde","Malta","Maldives","Brunei","Bahamas","Belize","Iceland","Vanuatu","Barbados","Sao Tome and Principe","Samoa","St. Lucia","Kiribati","Grenada","Micronesia, Fed. Sts.","Seychelles","Tonga","St. Vincent and the Grenadines","Antigua and Barbuda","Andorra","Dominica","St. Kitts and Nevis","Marshall Islands","San Marino","Palau","Nauru","Tuvalu"],"mode":"markers","marker":{"color":["rgba(237,100,117,1)","rgba(237,100,117,1)","rgba(154,231,71,1)","rgba(237,100,117,1)","rgba(237,100,117,1)","rgba(95,210,230,1)","rgba(154,231,71,1)","rgba(237,100,117,1)","rgba(251,230,77,1)","rgba(154,231,71,1)","rgba(237,100,117,1)","rgba(95,210,230,1)","rgba(237,100,117,1)","rgba(95,210,230,1)","rgba(95,210,230,1)","rgba(237,100,117,1)","rgba(237,100,117,1)","rgba(251,230,77,1)","rgba(251,230,77,1)","rgba(237,100,117,1)","rgba(251,230,77,1)","rgba(95,210,230,1)","rgba(251,230,77,1)","rgba(95,210,230,1)","rgba(251,230,77,1)","rgba(237,100,117,1)","rgba(95,210,230,1)","rgba(154,231,71,1)","rgba(237,100,117,1)","rgba(251,230,77,1)","rgba(95,210,230,1)","rgba(95,210,230,1)","rgba(154,231,71,1)","rgba(95,210,230,1)","rgba(237,100,117,1)","rgba(237,100,117,1)","rgba(251,230,77,1)","rgba(251,230,77,1)","rgba(154,231,71,1)","rgba(95,210,230,1)","rgba(237,100,117,1)","rgba(95,210,230,1)","rgba(237,100,117,1)","rgba(154,231,71,1)","rgba(237,100,117,1)","rgba(237,100,117,1)","rgba(95,210,230,1)","rgba(95,210,230,1)","rgba(237,100,117,1)","rgba(95,210,230,1)","rgba(154,231,71,1)","rgba(95,210,230,1)","rgba(95,210,230,1)","rgba(237,100,117,1)","rgba(95,210,230,1)","rgba(237,100,117,1)","rgba(237,100,117,1)","rgba(95,210,230,1)","rgba(95,210,230,1)","rgba(237,100,117,1)","rgba(237,100,117,1)","rgba(95,210,230,1)","rgba(95,210,230,1)","rgba(251,230,77,1)","rgba(154,231,71,1)","rgba(237,100,117,1)","rgba(154,231,71,1)","rgba(154,231,71,1)","rgba(95,210,230,1)","rgba(251,230,77,1)","rgba(95,210,230,1)","rgba(95,210,230,1)","rgba(237,100,117,1)","rgba(95,210,230,1)","rgba(95,210,230,1)","rgba(95,210,230,1)","rgba(95,210,230,1)","rgba(95,210,230,1)","rgba(95,210,230,1)","rgba(154,231,71,1)","rgba(251,230,77,1)","rgba(154,231,71,1)","rgba(237,100,117,1)","rgba(154,231,71,1)","rgba(154,231,71,1)","rgba(95,210,230,1)","rgba(251,230,77,1)","rgba(251,230,77,1)","rgba(251,230,77,1)","rgba(251,230,77,1)","rgba(154,231,71,1)","rgba(251,230,77,1)","rgba(237,100,117,1)","rgba(251,230,77,1)","rgba(237,100,117,1)","rgba(251,230,77,1)","rgba(237,100,117,1)","rgba(237,100,117,1)","rgba(251,230,77,1)","rgba(95,210,230,1)","rgba(251,230,77,1)","rgba(95,210,230,1)","rgba(237,100,117,1)","rgba(251,230,77,1)","rgba(154,231,71,1)","rgba(95,210,230,1)","rgba(251,230,77,1)","rgba(154,231,71,1)","rgba(237,100,117,1)","rgba(237,100,117,1)","rgba(154,231,71,1)","rgba(237,100,117,1)","rgba(95,210,230,1)","rgba(251,230,77,1)","rgba(251,230,77,1)","rgba(95,210,230,1)","rgba(251,230,77,1)","rgba(237,100,117,1)","rgba(251,230,77,1)","rgba(95,210,230,1)","rgba(237,100,117,1)","rgba(237,100,117,1)","rgba(154,231,71,1)","rgba(251,230,77,1)","rgba(95,210,230,1)","rgba(237,100,117,1)","rgba(154,231,71,1)","rgba(237,100,117,1)","rgba(251,230,77,1)","rgba(251,230,77,1)","rgba(95,210,230,1)","rgba(154,231,71,1)","rgba(237,100,117,1)","rgba(251,230,77,1)","rgba(251,230,77,1)","rgba(251,230,77,1)","rgba(154,231,71,1)","rgba(251,230,77,1)","rgba(251,230,77,1)","rgba(95,210,230,1)","rgba(237,100,117,1)","rgba(95,210,230,1)","rgba(95,210,230,1)","rgba(95,210,230,1)","rgba(95,210,230,1)","rgba(251,230,77,1)","rgba(95,210,230,1)","rgba(251,230,77,1)","rgba(251,230,77,1)","rgba(95,210,230,1)","rgba(154,231,71,1)","rgba(237,100,117,1)","rgba(237,100,117,1)","rgba(251,230,77,1)","rgba(95,210,230,1)","rgba(251,230,77,1)","rgba(95,210,230,1)","rgba(95,210,230,1)","rgba(237,100,117,1)","rgba(95,210,230,1)","rgba(154,231,71,1)","rgba(237,100,117,1)","rgba(237,100,117,1)","rgba(251,230,77,1)","rgba(251,230,77,1)","rgba(154,231,71,1)","rgba(95,210,230,1)","rgba(251,230,77,1)","rgba(237,100,117,1)","rgba(237,100,117,1)","rgba(154,231,71,1)","rgba(154,231,71,1)","rgba(251,230,77,1)","rgba(237,100,117,1)","rgba(154,231,71,1)","rgba(95,210,230,1)","rgba(237,100,117,1)","rgba(154,231,71,1)","rgba(237,100,117,1)","rgba(154,231,71,1)","rgba(237,100,117,1)","rgba(95,210,230,1)","rgba(237,100,117,1)","rgba(154,231,71,1)","rgba(154,231,71,1)","rgba(251,230,77,1)","rgba(154,231,71,1)","rgba(154,231,71,1)","rgba(237,100,117,1)","rgba(251,230,77,1)","rgba(237,100,117,1)","rgba(237,100,117,1)","rgba(237,100,117,1)"],"size":[69.241050590693263,68.999224801834316,33.76585566713095,30.531501776206202,28.247578623950172,27.218512172212591,26.970630673681683,24.074672772626645,22.184843263788199,20.855911179772889,20.530600909302539,20.448456731316586,19.8638416050035,19.435384061671343,18.365902124584949,18.292355660149212,17.385265006200321,17.062186493255652,16.873332000533065,15.659624833740306,15.199999999999999,14.976106839534333,14.874240468703425,14.330345596151094,14.223789311975086,13.6412301024373,13.616407864998738,13.352946437965905,13.340268896284682,12.796295751794121,12.743258481484519,12.703332889007367,12.515302134607444,12.43383286900171,12.379217270963407,11.904699910719625,11.732562594670796,11.703622617824932,11.528430311977619,11.380339887498948,11.215141094572203,11.093423092245461,10.939335795724674,10.84581294844754,10.830145812734649,10.798742063723097,10.767244989431571,10.688088481701515,10.282988974836115,10.133109617167559,9.9125348562223099,9.895359714832658,9.8436507609929542,9.5452305125841228,9.5452305125841228,9.5273790530888149,9.1256185593305883,8.8986589004665912,8.879477710861023,8.782928793055822,8.7244745683629468,8.4462112512353205,8.3649658092772601,8.3034971874288122,8.2829037686547604,8.2415587212098789,7.9459666924148342,7.9028133388608959,7.881145747868608,7.859416862050705,7.859416862050705,7.7938571665963448,7.6833147735478828,7.5711147958319938,7.0068592855540457,6.9823299831252683,6.8833125519211409,6.7574385243020005,6.6291005073286371,6.5770421565696635,6.4449979983983985,6.4182527020592097,6.3373175465073226,6.3101009266077872,6.3101009266077872,6.2277137733417085,6.1160797830996163,6.1160797830996163,6.0878405775518978,6.0878405775518978,6.0878405775518978,6.0594652770823156,6.0022983951764033,5.9648359329067935,5.959050847723665,5.8361925682739644,5.8095157247900344,5.6893836933970405,5.6589376255824728,5.6313902456001079,5.5975302994363387,5.5572380943915496,5.2099900199501397,5.1057789051960611,5.0131763593978844,4.9644516998286381,4.9539457296018856,4.9539457296018856,4.9010637094172633,4.8296148147911113,4.7971005354824836,4.664676173400859,4.6609416046390928,4.6271887242357312,4.5358966777357601,4.5127717305695656,4.4972859651955517,4.477849927241488,4.4544094772365295,4.4031734043061643,4.383300132670378,4.3593268686170843,4.355317877932646,4.2906397217713188,4.174921382870358,4.1072582032246947,4.0340579025361629,3.9727090178455766,3.8651512019742569,3.7308167138307629,3.7023801430836527,3.5763886032268268,3.5665016461206931,3.5015148038438357,3.481259920619924,3.2767948691238207,3.2713731999438518,3.2441200151549001,3.2276503540974919,3.205550421026627,3.2000000000000002,3.1608557321603272,3.1268868558020255,3.0225284173355398,2.9748873851023219,2.8583202716502516,2.8520432374554781,2.8394443859772207,2.6832774042918901,2.5593784492248521,2.458317958127243,2.4135943621178657,2.3134489978863146,2.3055482263138343,2.2816659994661328,2.2412414523193154,2.2000000000000002,2.1321835661585919,1.9606816861659009,1.8703293088490065,1.8421530582338135,1.8145174717749779,1.7534906930308058,1.6696938456699069,1.645683229480096,1.6352700094407324,1.6059397805975426,1.5329166015421469,1.5216151734399339,1.4233832869001712,1.3690451944500122,1.3618950038622251,1.3150485789118487,1.244030650891055,1.1695359714832658,1.0698658900466593,1.0602325267042627,0.97459666924148336,0.86080758671996693,0.84549722436790287,0.8164414002968976,0.79721576223896395,0.79721576223896395,0.78878405775518989,0.75916604570258617,0.71575187832910503,0.69227363664260277,0.59874804074753774,0.57237973450050506,0.53516165253998449,0.44562844569254056,0.40575065816014622,0.39407902170679521],"opacity":0.80000000000000004,"line":{"color":"rgba(31,119,180,1)"}},"type":"scatter","error_y":{"color":"rgba(31,119,180,1)"},"error_x":{"color":"rgba(31,119,180,1)"},"line":{"color":"rgba(31,119,180,1)"},"xaxis":"x","yaxis":"y","frame":null}],"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.20000000000000001,"selected":{"opacity":1},"debounce":0},"shinyEvents":["plotly_hover","plotly_click","plotly_selected","plotly_relayout","plotly_brushed","plotly_brushing","plotly_clickannotation","plotly_doubleclick","plotly_deselect","plotly_afterplot","plotly_sunburstclick"],"base_url":"https://plot.ly"},"evals":[],"jsHooks":[]}</script>
+</div>
+</div>
+</section>
+</section>
+<section id="sec-stats" class="level2" data-number="3.4">
+<h2 data-number="3.4" class="anchored" data-anchor-id="sec-stats"><span class="header-section-number">3.4</span> Some more statistical tests with the big Gapminder dataset</h2>
+<p>To work through this section, you need to run the first two R commands in <a href="#sec-line-graphs" class="quarto-xref">Section&nbsp;3.3.2</a> to create the data frames <code>big_gapminder_dataset</code> and <code>lifeExp_since_1900</code>.</p>
+<section id="unpaired-t-test" class="level3" data-number="3.4.1">
+<h3 data-number="3.4.1" class="anchored" data-anchor-id="unpaired-t-test"><span class="header-section-number">3.4.1</span> Unpaired t-test</h3>
+<p>In this <a href="https://www.ted.com/talks/hans_rosling_the_best_stats_you_ve_ever_seen/transcript?subtitle=en">talk</a> given in 2006, Hans Rosling argues that undergraduate students in Sweden had “preconceived ideas” about global health. They mistakenly thought that there were very big differences in life expectancy between the “Western world” and rest of the world. Rosling shows that, while there was some truth to this in the 1960s, it was no longer the case in the 2006 (and is no longer the case now).</p>
+<p>Let’s look at this with the Gapminder dataset: use unpaired t-tests to compare life expectancy in 1962 and 2022 between the ASEAN countries and the 10 biggest European countries (countries with population greater than 18 million in 2022).</p>
+<section id="step-1-1" class="level4">
+<h4 class="anchored" data-anchor-id="step-1-1">Step 1</h4>
+<p>Find the 10 biggest European countries with population greater than 18 million in 2022. To do this, we need the <code>big_gapminder_dataset</code> loaded in Section</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb151"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb151-1"><a href="#cb151-1" aria-hidden="true" tabindex="-1"></a>europe_big <span class="ot">&lt;-</span> big_gapminder_dataset <span class="sc">%&gt;%</span></span>
+<span id="cb151-2"><a href="#cb151-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(year <span class="sc">==</span> <span class="dv">2022</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb151-3"><a href="#cb151-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(continent <span class="sc">==</span> <span class="st">"Europe"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb151-4"><a href="#cb151-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(pop <span class="sc">&gt;</span> <span class="dv">18000000</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb151-5"><a href="#cb151-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(country, pop)</span>
+<span id="cb151-6"><a href="#cb151-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb151-7"><a href="#cb151-7" aria-hidden="true" tabindex="-1"></a>europe_big <span class="sc">%&gt;%</span></span>
+<span id="cb151-8"><a href="#cb151-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(pop))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre class="output"><code># A tibble: 10 × 2
+   country       pop
+   &lt;chr&gt;       &lt;dbl&gt;
+ 1 Russia  145000000
+ 2 Turkey   85300000
+ 3 Germany  83400000
+ 4 UK       67500000
+ 5 France   64600000
+ 6 Italy    59000000
+ 7 Spain    47600000
+ 8 Poland   39900000
+ 9 Ukraine  39700000
+10 Romania  19700000</code></pre>
+</div>
+</div>
+</section>
+<section id="step-2-1" class="level4">
+<h4 class="anchored" data-anchor-id="step-2-1">Step 2</h4>
+<p>Make a dataset that just includes these countries and the ASEAN countries, and only includes data for 1962 and 2022. Create a column <code>group</code> that is “ASEAN” for the ASEAN countries and “Europe” for the European countries</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb153"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb153-1"><a href="#cb153-1" aria-hidden="true" tabindex="-1"></a>asean_and_europe <span class="ot">&lt;-</span> lifeExp_since_1900 <span class="sc">%&gt;%</span></span>
+<span id="cb153-2"><a href="#cb153-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(asean <span class="sc">==</span> T <span class="sc">|</span> country <span class="sc">%in%</span> europe_big<span class="sc">$</span>country) <span class="sc">%&gt;%</span></span>
+<span id="cb153-3"><a href="#cb153-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">group =</span> <span class="fu">ifelse</span>(asean<span class="sc">==</span>T, <span class="st">"ASEAN"</span>, <span class="st">"Europe"</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb153-4"><a href="#cb153-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(year <span class="sc">%in%</span> <span class="fu">c</span>(<span class="dv">1962</span>, <span class="dv">2022</span>))</span>
+<span id="cb153-5"><a href="#cb153-5" aria-hidden="true" tabindex="-1"></a>asean_and_europe</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre class="output"><code># A tibble: 40 × 6
+   country continent  year lifeExp asean group 
+   &lt;chr&gt;   &lt;chr&gt;     &lt;dbl&gt;   &lt;dbl&gt; &lt;lgl&gt; &lt;chr&gt; 
+ 1 Brunei  Asia       1962    57.7 TRUE  ASEAN 
+ 2 Brunei  Asia       2022    74.2 TRUE  ASEAN 
+ 3 Germany Europe     1962    70   FALSE Europe
+ 4 Germany Europe     2022    80.6 FALSE Europe
+ 5 Spain   Europe     1962    69.8 FALSE Europe
+ 6 Spain   Europe     2022    83.5 FALSE Europe
+ 7 France  Europe     1962    71.2 FALSE Europe
+ 8 France  Europe     2022    83.4 FALSE Europe
+ 9 UK      Europe     1962    71   FALSE Europe
+10 UK      Europe     2022    81.5 FALSE Europe
+# ℹ 30 more rows</code></pre>
+</div>
+</div>
+</section>
+<section id="step-3" class="level4">
+<h4 class="anchored" data-anchor-id="step-3">Step 3</h4>
+<p>Make a dataset just with the 1962 data, and arrange the countries in order of life expectancy.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb155"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb155-1"><a href="#cb155-1" aria-hidden="true" tabindex="-1"></a>life_exp_1962 <span class="ot">&lt;-</span> asean_and_europe <span class="sc">%&gt;%</span></span>
+<span id="cb155-2"><a href="#cb155-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(year <span class="sc">==</span> <span class="dv">1962</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb155-3"><a href="#cb155-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(lifeExp)</span>
+<span id="cb155-4"><a href="#cb155-4" aria-hidden="true" tabindex="-1"></a>life_exp_1962</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre class="output"><code># A tibble: 20 × 6
+   country     continent  year lifeExp asean group 
+   &lt;chr&gt;       &lt;chr&gt;     &lt;dbl&gt;   &lt;dbl&gt; &lt;lgl&gt; &lt;chr&gt; 
+ 1 Myanmar     Asia       1962    39.6 TRUE  ASEAN 
+ 2 Lao         Asia       1962    41.5 TRUE  ASEAN 
+ 3 Indonesia   Asia       1962    49.5 TRUE  ASEAN 
+ 4 Cambodia    Asia       1962    50.2 TRUE  ASEAN 
+ 5 Turkey      Europe     1962    51   FALSE Europe
+ 6 Brunei      Asia       1962    57.7 TRUE  ASEAN 
+ 7 Vietnam     Asia       1962    58.4 TRUE  ASEAN 
+ 8 Philippines Asia       1962    61.8 TRUE  ASEAN 
+ 9 Thailand    Asia       1962    61.9 TRUE  ASEAN 
+10 Malaysia    Asia       1962    63.2 TRUE  ASEAN 
+11 Singapore   Asia       1962    66.5 TRUE  ASEAN 
+12 Romania     Europe     1962    66.7 FALSE Europe
+13 Poland      Europe     1962    67.9 FALSE Europe
+14 Russia      Europe     1962    69.1 FALSE Europe
+15 Spain       Europe     1962    69.8 FALSE Europe
+16 Italy       Europe     1962    69.9 FALSE Europe
+17 Germany     Europe     1962    70   FALSE Europe
+18 UK          Europe     1962    71   FALSE Europe
+19 Ukraine     Europe     1962    71   FALSE Europe
+20 France      Europe     1962    71.2 FALSE Europe</code></pre>
+</div>
+</div>
+</section>
+<section id="step-4" class="level4">
+<h4 class="anchored" data-anchor-id="step-4">Step 4</h4>
+<p>Make a scatterplot of the 1962 life expectancy data, using the x-axis to separate the ASEAN countries and European countries:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb157"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb157-1"><a href="#cb157-1" aria-hidden="true" tabindex="-1"></a>plot_1962 <span class="ot">&lt;-</span> life_exp_1962 <span class="sc">%&gt;%</span></span>
+<span id="cb157-2"><a href="#cb157-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x=</span>group, <span class="at">y=</span>lifeExp)) <span class="sc">+</span> </span>
+<span id="cb157-3"><a href="#cb157-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">col =</span> <span class="st">"dodgerblue"</span>, <span class="at">size =</span> <span class="dv">2</span>, <span class="at">alpha =</span> <span class="fl">0.5</span>)</span>
+<span id="cb157-4"><a href="#cb157-4" aria-hidden="true" tabindex="-1"></a>plot_1962</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="introduction_to_R_files/figure-html/unnamed-chunk-76-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="step-5" class="level4">
+<h4 class="anchored" data-anchor-id="step-5">Step 5</h4>
+<p>Add some country names:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb158"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb158-1"><a href="#cb158-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Make a vector of distances to shift the country names left and right</span></span>
+<span id="cb158-2"><a href="#cb158-2" aria-hidden="true" tabindex="-1"></a><span class="co"># (so they don't appear on top of the blue dots).</span></span>
+<span id="cb158-3"><a href="#cb158-3" aria-hidden="true" tabindex="-1"></a>shift_text <span class="ot">&lt;-</span> <span class="fu">rep</span>(<span class="fu">c</span>(<span class="sc">-</span><span class="fl">0.25</span>,<span class="fl">0.25</span>), <span class="dv">10</span>)</span>
+<span id="cb158-4"><a href="#cb158-4" aria-hidden="true" tabindex="-1"></a>shift_text</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre class="output"><code> [1] -0.25  0.25 -0.25  0.25 -0.25  0.25 -0.25  0.25 -0.25  0.25 -0.25  0.25
+[13] -0.25  0.25 -0.25  0.25 -0.25  0.25 -0.25  0.25</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb160"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb160-1"><a href="#cb160-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Add the text to the plot we made in Step 4 above. </span></span>
+<span id="cb160-2"><a href="#cb160-2" aria-hidden="true" tabindex="-1"></a><span class="co"># I found instructions on how to shift the text at</span></span>
+<span id="cb160-3"><a href="#cb160-3" aria-hidden="true" tabindex="-1"></a><span class="co"># https://ggplot2.tidyverse.org/reference/position_nudge.html</span></span>
+<span id="cb160-4"><a href="#cb160-4" aria-hidden="true" tabindex="-1"></a>plot_1962 <span class="sc">+</span></span>
+<span id="cb160-5"><a href="#cb160-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_text</span>(<span class="fu">aes</span>(<span class="at">label =</span> country), </span>
+<span id="cb160-6"><a href="#cb160-6" aria-hidden="true" tabindex="-1"></a>            <span class="at">position =</span> <span class="fu">position_nudge</span>(<span class="at">x =</span> shift_text))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="introduction_to_R_files/figure-html/unnamed-chunk-77-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="step-6" class="level4">
+<h4 class="anchored" data-anchor-id="step-6">Step 6</h4>
+<p>Use an unpaired t-test to test the hypothesis that life expectancy in 1962 was higher in the European countries than the ASEAN countries:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb161"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb161-1"><a href="#cb161-1" aria-hidden="true" tabindex="-1"></a><span class="fu">t.test</span>(lifeExp <span class="sc">~</span> group, <span class="at">data =</span> life_exp_1962)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre class="output"><code>
+    Welch Two Sample t-test
+
+data:  lifeExp by group
+t = -3.6162, df = 15.437, p-value = 0.002438
+alternative hypothesis: true difference in means between group ASEAN and group Europe is not equal to 0
+95 percent confidence interval:
+ -20.214816  -5.245184
+sample estimates:
+ mean in group ASEAN mean in group Europe 
+               55.03                67.76 </code></pre>
+</div>
+</div>
+</section>
+<section id="repeat-the-same-steps-with-2022-life-expectancy-data" class="level4">
+<h4 class="anchored" data-anchor-id="repeat-the-same-steps-with-2022-life-expectancy-data">Repeat the same steps with 2022 life expectancy data</h4>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb163"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb163-1"><a href="#cb163-1" aria-hidden="true" tabindex="-1"></a>lifeExp_2022 <span class="ot">&lt;-</span> asean_and_europe <span class="sc">%&gt;%</span> </span>
+<span id="cb163-2"><a href="#cb163-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(year <span class="sc">==</span> <span class="dv">2022</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb163-3"><a href="#cb163-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(lifeExp)</span>
+<span id="cb163-4"><a href="#cb163-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb163-5"><a href="#cb163-5" aria-hidden="true" tabindex="-1"></a>lifeExp_2022 <span class="sc">%&gt;%</span></span>
+<span id="cb163-6"><a href="#cb163-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x=</span>group, <span class="at">y=</span>lifeExp)) <span class="sc">+</span> </span>
+<span id="cb163-7"><a href="#cb163-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">col =</span> <span class="st">"dodgerblue"</span>, <span class="at">size =</span> <span class="dv">2</span>) <span class="sc">+</span></span>
+<span id="cb163-8"><a href="#cb163-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_text</span>(<span class="fu">aes</span>(<span class="at">label =</span> country), </span>
+<span id="cb163-9"><a href="#cb163-9" aria-hidden="true" tabindex="-1"></a>            <span class="at">position =</span> <span class="fu">position_nudge</span>(<span class="at">x =</span> shift_text))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="introduction_to_R_files/figure-html/unnamed-chunk-79-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="sourceCode cell-code" id="cb164"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb164-1"><a href="#cb164-1" aria-hidden="true" tabindex="-1"></a><span class="fu">t.test</span>(lifeExp <span class="sc">~</span> group, <span class="at">data =</span> lifeExp_2022)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre class="output"><code>
+    Welch Two Sample t-test
+
+data:  lifeExp by group
+t = -1.6062, df = 17.674, p-value = 0.126
+alternative hypothesis: true difference in means between group ASEAN and group Europe is not equal to 0
+95 percent confidence interval:
+ -9.192908  1.232908
+sample estimates:
+ mean in group ASEAN mean in group Europe 
+               73.93                77.91 </code></pre>
+</div>
+</div>
+</section>
+</section>
+<section id="chi-square-test" class="level3" data-number="3.4.2">
+<h3 data-number="3.4.2" class="anchored" data-anchor-id="chi-square-test"><span class="header-section-number">3.4.2</span> Chi-square test</h3>
+<p>Here are commands to make a two-by-two table showing numbers of countries in Asia and Europe with life expectancies above and below 60 in 1962.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb166"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb166-1"><a href="#cb166-1" aria-hidden="true" tabindex="-1"></a>life_exp_1962 <span class="ot">&lt;-</span> lifeExp_since_1900 <span class="sc">%&gt;%</span></span>
+<span id="cb166-2"><a href="#cb166-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(year <span class="sc">==</span> <span class="dv">1962</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb166-3"><a href="#cb166-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(continent <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"Asia"</span>, <span class="st">"Europe"</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb166-4"><a href="#cb166-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">lifeExpCat =</span> <span class="fu">ifelse</span>(lifeExp <span class="sc">&lt;</span> <span class="dv">60</span>, <span class="st">"le &lt; 60"</span>, <span class="st">"le &gt;= 60"</span>))</span>
+<span id="cb166-5"><a href="#cb166-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb166-6"><a href="#cb166-6" aria-hidden="true" tabindex="-1"></a>tab_1962 <span class="ot">&lt;-</span> <span class="fu">table</span>(life_exp_1962<span class="sc">$</span>lifeExpCat, life_exp_1962<span class="sc">$</span>continent)</span>
+<span id="cb166-7"><a href="#cb166-7" aria-hidden="true" tabindex="-1"></a>tab_1962</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre class="output"><code>          
+           Asia Europe
+  le &lt; 60    34      5
+  le &gt;= 60   25     43</code></pre>
+</div>
+</div>
+<p>Once we have created the table, we can use the <code>chi.sq()</code> command to run a chi-square test:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb168"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb168-1"><a href="#cb168-1" aria-hidden="true" tabindex="-1"></a><span class="fu">chisq.test</span>(tab_1962)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre class="output"><code>
+    Pearson's Chi-squared test with Yates' continuity correction
+
+data:  tab_1962
+X-squared = 23.47, df = 1, p-value = 1.269e-06</code></pre>
+</div>
+</div>
+<p>The small p-value indicates that, in 1962, there was a significant difference between</p>
+<ul>
+<li>the proportion of Asian countries with life expectancy less than 60 (<span class="math inline">\(\frac{34}{34+25} = 58\%\)</span>), and</li>
+<li>the proportion of European countries with life expectancy less than 60 (<span class="math inline">\(\frac{5}{5+43} = 10\%\)</span>).</li>
+</ul>
+<div class="callout callout-style-simple callout-caution no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Exercise
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Modify the code above to make a table showing numbers of Asian and European countries with life expectancy above and below 75. Then run a chi-square test to assess the signficance of the difference in proportions.</p>
+</div>
+</div>
+<div class="callout callout-style-simple callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-13-contents" aria-controls="callout-13" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Click to see the solution
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-13" class="callout-13-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<div class="cell">
+<div class="sourceCode cell-code" id="cb170"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb170-1"><a href="#cb170-1" aria-hidden="true" tabindex="-1"></a>life_exp_2022 <span class="ot">&lt;-</span> lifeExp_since_1900 <span class="sc">%&gt;%</span></span>
+<span id="cb170-2"><a href="#cb170-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(year <span class="sc">==</span> <span class="dv">2022</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb170-3"><a href="#cb170-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(continent <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"Asia"</span>, <span class="st">"Europe"</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb170-4"><a href="#cb170-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">lifeExpCat =</span> <span class="fu">ifelse</span>(lifeExp <span class="sc">&lt;</span> <span class="dv">75</span>, <span class="st">"le &lt; 75"</span>, <span class="st">"le &gt;= 75"</span>))</span>
+<span id="cb170-5"><a href="#cb170-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb170-6"><a href="#cb170-6" aria-hidden="true" tabindex="-1"></a>tab_2022 <span class="ot">&lt;-</span> <span class="fu">table</span>(life_exp_2022<span class="sc">$</span>lifeExpCat, life_exp_2022<span class="sc">$</span>continent)</span>
+<span id="cb170-7"><a href="#cb170-7" aria-hidden="true" tabindex="-1"></a>tab_2022</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre class="output"><code>          
+           Asia Europe
+  le &lt; 75    38     12
+  le &gt;= 75   20     35</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb172"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb172-1"><a href="#cb172-1" aria-hidden="true" tabindex="-1"></a><span class="fu">chisq.test</span>(tab_2022)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre class="output"><code>
+    Pearson's Chi-squared test with Yates' continuity correction
+
+data:  tab_2022
+X-squared = 15.077, df = 1, p-value = 0.0001032</code></pre>
+</div>
+</div>
+</div>
 </div>
 </div>
 </section>
@@ -1562,7 +2019,7 @@ Click to see the solution
 </section>
 <section id="further-reading" class="level1" data-number="4">
 <h1 data-number="4"><span class="header-section-number">4</span> Further reading</h1>
-<p>Apart from the sources mentioned in <a href="#sec-about" class="quarto-xref">Section&nbsp;1</a>, another excellent place to learn more about R is the free online book <a href="https://r4ds.hadley.nz/">R for Data Science (2nd edition)</a>, by Hadley Wickham, Mine Çetinkaya-Rundel and Garrett Grolemund.</p>
+<p>Apart from the sources mentioned in <a href="#sec-sources" class="quarto-xref">Section&nbsp;1.1</a>, another excellent place to learn more about R is the free online book <a href="https://r4ds.hadley.nz/">R for Data Science (2nd edition)</a>, by Hadley Wickham, Mine Çetinkaya-Rundel and Garrett Grolemund.</p>
 
 
 </section>
@@ -1981,7 +2438,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <footer class="footer">
   <div class="nav-footer">
     <div class="nav-footer-left">
-<p>Last updated 9 July 2024</p>
+<p>Website last updated 9 July 2024</p>
 </div>   
     <div class="nav-footer-center">
       &nbsp;

@@ -1,7 +1,8 @@
 ---
 title: "Learning Thai"
 date: last-modified
-date-format: "D MMMM, YYYY"
+date-format: "D MMMM YYYY"
+published-title: "this page last updated"
 ---
 
 Over the past few months I've been enjoying Thai lessons at the [Sumaa Language and Culture Institute](https://www.sumaa.net/). Previously I learnt Thai and did a study tour in Thailand with the amazing [Ajarn Chintana Sandilands](https://chl-archive.anu.edu.au/news-events/news/1065/chintana-sandilands-honoured-lifetime-achievement-award) at Australian National University.

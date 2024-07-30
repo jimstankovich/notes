@@ -1,7 +1,8 @@
 ---
 title: "Life in Thailand"
 date: last-modified
-date-format: "D MMMM, YYYY"
+date-format: "D MMMM YYYY"
+published-title: "this page last updated"
 ---
 
 - [Bang Pho](bang_pho.qmd): where I live

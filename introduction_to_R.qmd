@@ -2,7 +2,8 @@
 title: "Data analysis using R: an introduction"
 author: ""
 date: last-modified
-date-format: "D MMMM, YYYY"
+date-format: "D MMMM YYYY"
+published-title: "this page last updated"
 format: 
   html:
     toc: true
@@ -36,40 +37,52 @@ em3 = function(x) {
 }
 ```
 
-Things to add, as discussed in the meeting on 30 June
-
--   Some basic stats analyses, e.g. a chi-square test and t-test.
-
--   A basic description of what R is used for, and of what other things are better for (doing algebra, plotting graphs). Matlab, Desmos.
-
--   Explain the use of quotes for text.
-
--   Change the focus a bit... the workshop isn't just for social scientists.
-
--   Talk about datasets that come with R packages.
-
 # About these notes {#sec-about}
 
 R is a programming language used by many researchers to analyse data. The aims of these notes are:
 
 -   to give you an understanding of how R works,
--   to help you appreciate why people find R useful for managing and analysing data, and
+-   to help you appreciate why people find R useful for managing, analysing and plotting data, and
 -   to encourage you to use R for your research.
 
-In these notes we look at some data on countries around the world based on free material from [GAPMINDER.ORG](https://www.gapminder.org/data/), CC-BY LICENSE. Hans Rosling, the co-founder of Gapminder, has given some extremely impressive presentations using Gapminder data, for example [here](https://www.ted.com/talks/hans_rosling_the_best_stats_you_ve_ever_seen?language=en) and [here](https://www.youtube.com/watch?v=jbkSRLYSojo).
+These notes focus on the the use of R to manage and plot data. They not teach any statistics, though they include examples showing how to do t-tests and chi-square tests.
 
-Some parts of these notes have been taken from parts of a longer course called [R for Reproducible Scientific Analysis](https://swcarpentry.github.io/r-novice-gapminder/), and I have made some modifications. The course *R for Reproducible Scientific Analysis* is Copyright (c) [The Carpentries](https://carpentries.org/). Here is the [license](https://creativecommons.org/licenses/by/4.0/) governing the use of the course.
+## Sources {#sec-sources}
+These notes use data on countries around the world based on free material from [GAPMINDER.ORG](https://www.gapminder.org/data/), CC-BY LICENSE. Hans Rosling, the co-founder of Gapminder, has given some extremely impressive presentations using Gapminder data, for example [here](https://www.ted.com/talks/hans_rosling_the_best_stats_you_ve_ever_seen?language=en) and [here](https://www.youtube.com/watch?v=jbkSRLYSojo).
+
+Some parts of these notes are taken directly from a longer course called [R for Reproducible Scientific Analysis](https://swcarpentry.github.io/r-novice-gapminder/), and I have made some modifications. The course *R for Reproducible Scientific Analysis* is Copyright (c) [The Carpentries](https://carpentries.org/). Here is the [license](https://creativecommons.org/licenses/by/4.0/) governing the use of the course.
 
 Half-way through writing these notes, I discovered an excellent online book, [R for Non-Programmers: A Guide for Social Scientists](https://bookdown.org/daniel_dauber_io/r4np_book/) by Daniel Dauber (2024). If I had found this book sooner, I would have included many more good ideas from it.
 
+## How to use these notes
 To work through the exercises in these notes, you need two pieces of software installed on your computer:
 
 1.  `r em2("R")`, available [here](https://cran.rstudio.com/).
 2.  `r em2("RStudio")`, available [here](https://posit.co/download/rstudio-desktop/#download).
 
-Please make sure that you have the latest versions of these installed. If you have any problems installing these, take a look at the instructions in Chapter 3 of [R for Non-Programmers](https://bookdown.org/daniel_dauber_io/r4np_book/setting-up-r-and-rstudio.html).
+Please make sure you have the latest versions installed. If you have any problems installing them, take a look at the instructions in Chapter 3 of [R for Non-Programmers](https://bookdown.org/daniel_dauber_io/r4np_book/setting-up-r-and-rstudio.html).
 
-# Introduction to R and RStudio
+There is probably too much here to work through in 3 hours. If you are not very familiar with R, I'd recommend working though the following sections in order:
+
+- @sec-intro-R-RStudio: Introduction to R (work through Sections 2.3 to 2.12; come back and read Sections 2.1 and 2.2 later if you prefer) 
+- @sec-loading-data: Loading data with the `readr` package
+- @sec-dplyr: Using the `dplyr` package to look at the `asean_data`
+
+After that, if you have time, you can continue with 
+
+- @sec-plotting: Plotting data with the `ggplot2` package
+
+or you can jump to 
+
+- @sec-stats: Some more statistical tests with the big Gapminder dataset
+
+If you have your own data in a CSV file, try loading it as in @sec-loading-data.
+
+Please take your time: try making some changes to the R commands here, and see what happens.
+
+
+
+# Introduction to R and RStudio {#sec-intro-R-RStudio}
 
 ## Why use R and RStudio?
 
@@ -81,9 +94,21 @@ Therefore, these notes will help you begin exploring your data using R and RStud
 
 However, to make using R easier, we will use the program RStudio, which we also downloaded above. RStudio is a free, open-source, Integrated Development Environment (IDE). It provides a built-in editor, works on all platforms (including on servers) and provides many advantages such as integration with version control and project management.
 
+## A comparison of R and some other software
+
+R was originally developed by statisticians, and many people use it for statistics: things like regression, hypothesis testing and calculating confidence intervals. There are various pieces of commercial statistical software that do these things, such as SPSS, Stata and SAS. Unlike these, R is free, open-source software. Thousands of people contribute to R by writing `r em2("packages")` (@sec-packages), and these packages do a wide range of useful things. In particular, they make it easier to organise, manage and tidy data, and to plot data. In some jobs I have used R to do these things without doing any statistics, and I think it does them better than other statistical software. Even if you are planning to do lots of statistical analyses, data is often messy, and it takes more time to organise and clean data than to analyse it. So don't underestimate the value of a system like R that is good for this!
+
+Lots of people say that R takes *time* to learn: it will take you longer to work out how to do a t-test in R than in SPSS. In this *Nature* [article](https://www.nature.com/articles/517109a) from 2014, ecologist Megan Jennings says it is worth spending the time learning R:
+
+> “Make that time. Set it aside as an investment: for saving time later, and for building skills that can be used across multiple problems we face as scientists.”
+
+R is *not* designed for doing algebra and solving equations, or for plotting graphs. Other tools are better for these things, such as the commercial software Matlab and Mathematica and the free website [Desmos](https://www.desmos.com/calculator).
+
+
+
 ## Overview
 
-We will begin with raw data, perform exploratory analyses, and learn how to plot results graphically. This example starts with data from gapminder.org, containing yearly statistics for many countries through time. Can you read the data into R? Can you plot the population for Indonesia? Can you calculate the average income for ASEAN countries? By the end of these lessons you will be able to do things like plot the populations for all of these countries in under a minute!
+We will begin with raw data, perform exploratory analyses, and learn how to plot results graphically. This example starts with data from gapminder.org, containing yearly statistics for many countries through time. Can you read the data into R? Can you calculate the total population of ASEAN countries? Can you plot life expectancy for various countries? By the end of these lessons you will be able to do things like these in under a minute!
 
 **Basic layout**
 
@@ -239,15 +264,15 @@ Other functions take different types of arguments, for example
 paste0(1," dog"," and ","1","2", " cats")
 ```
 
-This example shows that R works with text as well as numbers.
+This example shows that R works with text as well as numbers. The quotation marks `"` are used to show that the thing inside is text, not something else like a number, a function, or an object (@sec-object).
 
 Don’t worry about trying to remember every function in R. You can look them up on Google, or if you can remember the start of the function’s name, type it and RStudio will provide some suggestions for the end of the name. For example, if you type `sq`, RStudio will list various functions starting with "sq", including `sqrt()`.
 
 Typing a ? before the name of a command will open the *help page* for the command on the bottom right. The help page includes a detailed description of the command and how it works. The bottom of the help page will usually has examples of how to use the command. (This is often the most useful part of the help page!)
 
-## Objects: giving names to pieces of information
+## Objects: giving names to pieces of information {#sec-object}
 
-A key concept in R, and in any programming language, is to give names to pieces of data. You can give names to single numbers, a bit like `x`'s and `y`'s in algebra you did in high school, or to huge tables of data. Any name (like `x` or `y`) with something assigned to it is called an `r(em2("object"))`.
+A key concept in R, and in any programming language, is to give names to pieces of data. You can give names to single numbers, a bit like `x`'s and `y`'s in algebra you did in high school, or to huge tables of data. Any name (like `x` or `y`) with something assigned to it is called an `r em2("object")`.
 
 The `->` symbol is used to assign some data to an object. For example, the command
 
@@ -578,9 +603,18 @@ install.packages("ggplot2")
 ```
 :::
 
+As well as adding functions to R, many packages include interesting datasets to play with. For example: 
+
+* The package [nycflights](https://CRAN.R-project.org/package=nycflights13) includes data for all flights that departed from New York City in 2013.
+
+* The package [gapminder](https://CRAN.R-project.org/package=gapminder) includes an older version of the Gapminder data that we use in these notes (up to 2007).
+
+* The book [R for Non-Programmers](https://bookdown.org/daniel_dauber_io/r4np_book/) has a companion package `r4np` with all the datasets used in the book. This package is not yet available in CRAN, so you need to follow slightly different instructions to install it. The instructions are included in the book [here](https://bookdown.org/daniel_dauber_io/r4np_book/r-basics-the-very-fundamentals.html#installing-packages-using-a-function).
+
+
 # Working with data
 
-## Loading data with the `readr` package
+## Loading data with the `readr` package {#sec-loading-data}
 
 Let's load a small CSV file with some Gapminder data for 10 ASEAN countries. We will use the package `readr` to do this.
 
@@ -637,6 +671,13 @@ Yet another way to look at the data is to type the name of the dataset in the Co
 #| class-output: output
 asean_data
 ```
+::: {.callout-caution appearance="minimal"}
+## Exercise
+
+If you have your own data in a CSV file, trying loading it using the `read_csv()` command. Then try adapting some of the commands below to apply them to your data.
+
+:::
+
 
 ### Method 2: Download the data directly into R from the internet
 
@@ -650,7 +691,7 @@ asean_data <- read_csv("https://raw.githubusercontent.com/jimstankovich/notes/ma
 
 Method 2 is fine for the small dataset we are looking at here. However, if you are running your R commands many times and working with a large dataset, it is better to download the dataset onto your computer first (Method 1), rather than downloading a large dataset many times.
 
-## Using the `dplyr` package to look at the `asean_data`
+## Using the `dplyr` package to look at the `asean_data` {#sec-dplyr}
 
 I use the `dplyr` package more than any other packages. It is very useful for managing datasets: cleaning them, joining them, and selecting smaller sections for statistical analysis.
 
@@ -840,34 +881,16 @@ asean_gdp_summary %>%
   select(-total_gdp)
 ```
 
-### Calculate average life expectancy
-
-These calculations only require some small changes to calculate average life expectancy across ASEAN countries instead of per capita GDP. Instead of multiplying per capita GDP by population, multiply life expectancy by population to give "life expectancy times population", or "letp" for short.
-
-```{r}
-#| class-output: output
-asean_lifeExp <- asean_data %>%
-  mutate(letp = pop * lifeExp) %>%
-  group_by(year) %>%
-  summarise(
-    pop = sum(pop),
-    letp = sum(letp),
-    lifeExp = letp / pop) %>%
-  select(-letp)
-asean_lifeExp
-```
-
 ### List of `dplyr` functions we have used
 
 -   `filter()`: for selecting particular rows of a data.frame
 -   `mutate()`: for adding a new column (vector) to a data.frame, or to change an existing column
 -   `summarise()`: to calculate things like sums or averages across multiple rows
--   `group_by()`: I don't properly understand all the ways this function is used, but I often use it before `summarise()`, to calculate summaries by groups (e.g. for different years in the examples above)
--   `select()`: for selecting particular columns of a data.frame
+-   `group_by()`: I don't properly understand all the ways this function is used, but I often use it before `summarise()`, to calculate summaries by groups (e.g. for different years in the example above)
 
 There is a useful summary of `dplyr` commands on this [Data Wrangling Cheat Sheet](https://www.rstudio.com/wp-content/uploads/2015/02/data-wrangling-cheatsheet.pdf).
 
-## Plotting data with the `ggplot2` package
+## Plotting data with the `ggplot2` package {#sec-plotting}
 
 I haven't used `ggplot2` much: I usually plot graphs using "base R" (without using any packages). However, many people recommend `ggplot2` for graphs, so I am trying it out. I don't yet understand the ["grammar of graphics"](https://ggplot2.tidyverse.org/) used in `ggplot2`, so I'm definitely not qualified to teach anyone how to use it! Nevertheless, I'm still including this section to
 
@@ -878,7 +901,7 @@ I did a lot of googling to make the graphs below. I have included links to some 
 
 I was impressed how fast it was to make some fairly complicated graphs with `ggplot2`, so I think I'll start using it more to explore data. I really like base R for fine-tuning graphs and converting them to pdf files for publications, so I may keep using base R for that.
 
-### Bar graphs
+### Bar graphs (and paired t-tests)
 
 ```{r}
 #| class-output: output
@@ -924,16 +947,29 @@ ggplot(asean_data, aes(x=country, y=lifeExp, fill=year)) +
   theme(axis.text.x=element_text(angle=90,hjust=1,vjust=0.5))
 ```
 
+Let's calculate change in life expectancy between 2012 and 2022 for each country. To do this, let's make a table that has one row for each country, and separate columns for life expectancy in 2012 (`le2012`) and 2022 (`le2022`). We can do this by using `group_by()` and `summarise()` again.
+
 ```{r}
 #| class-output: output
 life_exp_table <- asean_data %>%
-  arrange(year) %>% # A new dplyr function to sort rows of a dataset
+  arrange(year) %>% 
   group_by(country) %>%
   summarise(
     le2012 = first(lifeExp),
     le2022 = last(lifeExp),
-    le_change = le2022 - le2012)
+    le_change = le2022 - le2012,
+    pop2022 = last(pop))
+
+life_exp_table
 ```
+
+There are some other `dplyr` function in here that we haven't seen before:
+
+-   `arrange(year)` sorts the table by year, so that the 2012 data appears before the 2022 data
+
+-   Once the data is grouped by `country`, the function `first()` is used to select the first life expectancy value for the country (the one for 2012), and the function `last()` is used to select the last life expectancy and population for the country (from 2022)
+
+We can make a bar-graph to show the changes in life expectancy for each country:
 
 ```{r}
 #| class-output: output
@@ -948,7 +984,40 @@ ggplot(life_exp_table, aes(x=country, y=le_change)) +
   ylim(-1, 4.5)
 ```
 
-### Line graphs showing changes in a variable over time
+We can also do a paired t-test, to test the hypothesis that average life expectancy has increased from 2012 to 2022 across the 10 ASEAN countries. Here are 3 methods to do this test: they all give the same result.
+
+#### Method 1: Compare life expectancies in 2022 and 2012 using the `t.test()` function
+```{r}
+#| class-output: output
+t.test(life_exp_table$le2022, life_exp_table$le2012, paired = T)
+```
+
+#### Method 2: Look at changes in life expectancy
+```{r}
+#| class-output: output
+t.test(life_exp_table$le_change)
+```
+
+#### Method 3: run a simple linear regression model with the `lm()` function
+```{r}
+#| class-output: output
+regression_model <- lm(le_change ~ 1, data = life_exp_table)
+summary(regression_model)
+```
+`lm()` is the R function to linear regression. The paired t-test is equivalent to a simple linear regression model, with only a constant term in the model.
+
+#### Alternative method: give greater weight to larger countries
+The paired t-test above treats all 10 countries equally. In some contexts, it might be more appropriate to give greater weight to the countries with larger populations:
+
+```{r}
+#| class-output: output
+weighted_regression_model <- lm(le_change ~ 1, weights = pop2022, 
+                                data = life_exp_table)
+summary(weighted_regression_model)
+```
+
+
+### Line graphs showing changes in a variable over time {#sec-line-graphs}
 
 To plot the graphs from now on, you need to download a much bigger CSV file of Gapminder data, called `big_gapminder_dataset.csv`. It is available [here](https://github.com/jimstankovich/notes/blob/main/data/big_gapminder_dataset.csv).
 
@@ -1119,6 +1188,150 @@ fig <- fig %>%
 fig
 ```
 
+## Some more statistical tests with the big Gapminder dataset {#sec-stats}
+
+To work through this section, you need to run the first two R commands in  @sec-line-graphs to create the data frames `big_gapminder_dataset` and `lifeExp_since_1900`.
+
+### Unpaired t-test
+In this [talk](https://www.ted.com/talks/hans_rosling_the_best_stats_you_ve_ever_seen/transcript?subtitle=en) given in 2006, Hans Rosling argues that undergraduate students in Sweden had "preconceived ideas" about global health. They mistakenly thought that there were very big differences in life expectancy between the "Western world" and rest of the world. Rosling shows that, while there was some truth to this in the 1960s, it was no longer the case in the 2006 (and is no longer the case now).
+
+Let's look at this with the Gapminder dataset: use unpaired t-tests to compare life expectancy in 1962 and 2022 between the ASEAN countries and the 10 biggest European countries (countries with population greater than 18 million in 2022).
+
+#### Step 1
+Find the 10 biggest European countries with population greater than 18 million in 2022. To do this, we need the `big_gapminder_dataset` loaded in Section 
+```{r}
+#| class-output: output
+
+europe_big <- big_gapminder_dataset %>%
+  filter(year == 2022) %>%
+  filter(continent == "Europe") %>%
+  filter(pop > 18000000) %>%
+  select(country, pop)
+
+europe_big %>%
+  arrange(desc(pop))
+```
+
+#### Step 2
+Make a dataset that just includes these countries and the ASEAN countries, and only includes data for 1962 and 2022. Create a column `group` that is "ASEAN" for the ASEAN countries and "Europe" for the European countries
+```{r}
+#| class-output: output
+asean_and_europe <- lifeExp_since_1900 %>%
+  filter(asean == T | country %in% europe_big$country) %>%
+  mutate(group = ifelse(asean==T, "ASEAN", "Europe")) %>%
+  filter(year %in% c(1962, 2022))
+asean_and_europe
+```
+
+#### Step 3
+Make a dataset just with the 1962 data, and arrange the countries in order of life expectancy.
+```{r}
+#| class-output: output
+life_exp_1962 <- asean_and_europe %>%
+  filter(year == 1962) %>%
+  arrange(lifeExp)
+life_exp_1962
+```
+
+#### Step 4
+Make a scatterplot of the 1962 life expectancy data, using the x-axis to separate the ASEAN countries and European countries:
+```{r}
+#| class-output: output
+plot_1962 <- life_exp_1962 %>%
+  ggplot(aes(x=group, y=lifeExp)) + 
+  geom_point(col = "dodgerblue", size = 2, alpha = 0.5)
+plot_1962
+```
+
+#### Step 5
+Add some country names:
+```{r}
+#| class-output: output
+# Make a vector of distances to shift the country names left and right
+# (so they don't appear on top of the blue dots).
+shift_text <- rep(c(-0.25,0.25), 10)
+shift_text
+# Add the text to the plot we made in Step 4 above. 
+# I found instructions on how to shift the text at
+# https://ggplot2.tidyverse.org/reference/position_nudge.html
+plot_1962 +
+  geom_text(aes(label = country), 
+            position = position_nudge(x = shift_text))
+```
+
+#### Step 6
+Use an unpaired t-test to test the hypothesis that life expectancy in 1962 was higher in the European countries than the ASEAN countries:
+
+```{r}
+#| class-output: output
+t.test(lifeExp ~ group, data = life_exp_1962)
+```
+
+#### Repeat the same steps with 2022 life expectancy data
+```{r}
+#| class-output: output
+lifeExp_2022 <- asean_and_europe %>% 
+  filter(year == 2022) %>%
+  arrange(lifeExp)
+
+lifeExp_2022 %>%
+  ggplot(aes(x=group, y=lifeExp)) + 
+  geom_point(col = "dodgerblue", size = 2) +
+  geom_text(aes(label = country), 
+            position = position_nudge(x = shift_text))
+
+t.test(lifeExp ~ group, data = lifeExp_2022)
+```
+### Chi-square test
+
+Here are commands to make a two-by-two table showing numbers of countries in Asia and Europe with life expectancies above and below 60 in 1962.
+
+```{r}
+#| class-output: output
+life_exp_1962 <- lifeExp_since_1900 %>%
+  filter(year == 1962) %>%
+  filter(continent %in% c("Asia", "Europe")) %>%
+  mutate(lifeExpCat = ifelse(lifeExp < 60, "le < 60", "le >= 60"))
+
+tab_1962 <- table(life_exp_1962$lifeExpCat, life_exp_1962$continent)
+tab_1962
+```
+
+Once we have created the table, we can use the `chi.sq()` command to run a chi-square test:
+```{r}
+#| class-output: output
+chisq.test(tab_1962)
+```
+The small p-value indicates that, in 1962, there was a significant difference between 
+
+- the proportion of Asian countries with life expectancy less than 60 ($\frac{34}{34+25} = 58\%$), and 
+- the proportion of European countries with life expectancy less than 60 ($\frac{5}{5+43} = 10\%$).
+
+::: {.callout-caution appearance="minimal"}
+## Exercise
+
+Modify the code above to make a table showing numbers of Asian and European countries with life expectancy above and below 75. Then run a chi-square test to assess the signficance of the difference in proportions.
+
+:::
+
+::: {.callout-note appearance="minimal" collapse="true"}
+## Click to see the solution
+
+```{r}
+#| class-output: output
+life_exp_2022 <- lifeExp_since_1900 %>%
+  filter(year == 2022) %>%
+  filter(continent %in% c("Asia", "Europe")) %>%
+  mutate(lifeExpCat = ifelse(lifeExp < 75, "le < 75", "le >= 75"))
+
+tab_2022 <- table(life_exp_2022$lifeExpCat, life_exp_2022$continent)
+tab_2022
+
+chisq.test(tab_2022)
+```
+:::
+
+
 # Further reading
 
-Apart from the sources mentioned in @sec-about, another excellent place to learn more about R is the free online book [R for Data Science (2nd edition)](https://r4ds.hadley.nz/), by Hadley Wickham, Mine Çetinkaya-Rundel and Garrett Grolemund.
+Apart from the sources mentioned in @sec-sources, another excellent place to learn more about R is the free online book [R for Data Science (2nd edition)](https://r4ds.hadley.nz/), by Hadley Wickham, Mine Çetinkaya-Rundel and Garrett Grolemund.

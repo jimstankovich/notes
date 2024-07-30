@@ -1,12 +1,13 @@
 ---
 title: "Websites"
 date: last-modified
-date-format: "D MMMM, YYYY"
+date-format: "D MMMM YYYY"
+published-title: "this page last updated"
 ---
 
 ## Statistics
 
-- [MSNI stats tips](https://msni-stats-tips.netlify.app/)
+- [Stats Tips](https://msni-stats-tips.netlify.app/). This blog is written by Paul Sanfilippo, an applied statistician doing research on multiple sclerosis in the [Department of Neuroscience](https://www.monash.edu/medicine/translational/neuroscience/home) at Monash University. I used to work in this department.
 
 - [Biostatistics Blog](https://blogs.utas.edu.au/biostatistics/). I worked on this blog many years ago with some former colleagues in Hobart. Several of them currently teach a course [Introduction to Biostatistics](https://www.utas.edu.au/courses/chm/units/cam625-introduction-to-biostatistics) at the University of Tasmania.
 
@@ -15,12 +16,12 @@ date-format: "D MMMM, YYYY"
 
 ## Quarto
 
-I couldn't have made this website without
+GitHub is a mystery to me: I agree with this [xkcd cartoon](https://xkcd.com/1597/) (thanks for recommending it Ben!). I couldn't have made this website without
 
 - the notes [Happy Git and GitHub for the useR](https://happygitwithr.com/) written by Jenny Bryan and others, and
 
 - the [template](https://github.com/jtr13/website-template) made by Joyce Robbins, along with her [video demonstration](https://www.youtube.com/watch?v=YN75YXaLFGM).
-I have to follow this video every time I update the website.  :)
+
 
 
 

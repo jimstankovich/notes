@@ -1,11 +1,12 @@
 ---
 title: "Data, statistics, R"
 date: last-modified
-date-format: "D MMMM, YYYY"
+date-format: "D MMMM YYYY"
+published-title: "this page last updated"
 ---
 
 ## Introduction to R
-- Some [notes](introduction_to_R.qmd) for a 2-3 hour workshop 
+- Some [notes](introduction_to_R.qmd) for a 3-hour workshop 
 
 ## Statistics notes
 - nothing here yet
