@@ -48,6 +48,7 @@ R is a programming language used by many researchers to analyse data. The aims o
 These notes focus on the the use of R to manage and plot data. They not teach any statistics, though they include examples showing how to do t-tests and chi-square tests.
 
 ## Sources {#sec-sources}
+
 These notes use data on countries around the world based on free material from [GAPMINDER.ORG](https://www.gapminder.org/data/), CC-BY LICENSE. Hans Rosling, the co-founder of Gapminder, has given some extremely impressive presentations using Gapminder data, for example [here](https://www.ted.com/talks/hans_rosling_the_best_stats_you_ve_ever_seen?language=en) and [here](https://www.youtube.com/watch?v=jbkSRLYSojo).
 
 Some parts of these notes are taken directly from a longer course called [R for Reproducible Scientific Analysis](https://swcarpentry.github.io/r-novice-gapminder/), and I have made some modifications. The course *R for Reproducible Scientific Analysis* is Copyright (c) [The Carpentries](https://carpentries.org/). Here is the [license](https://creativecommons.org/licenses/by/4.0/) governing the use of the course.
@@ -55,6 +56,7 @@ Some parts of these notes are taken directly from a longer course called [R for 
 Half-way through writing these notes, I discovered an excellent online book, [R for Non-Programmers: A Guide for Social Scientists](https://bookdown.org/daniel_dauber_io/r4np_book/) by Daniel Dauber (2024). If I had found this book sooner, I would have included many more good ideas from it.
 
 ## How to use these notes
+
 To work through the exercises in these notes, you need two pieces of software installed on your computer:
 
 1.  `r em2("R")`, available [here](https://cran.rstudio.com/).
@@ -64,23 +66,21 @@ Please make sure you have the latest versions installed. If you have any problem
 
 There is probably too much here to work through in 3 hours. If you are not very familiar with R, I'd recommend working though the following sections in order:
 
-- @sec-intro-R-RStudio: Introduction to R (work through Sections 2.3 to 2.12; come back and read Sections 2.1 and 2.2 later if you prefer) 
-- @sec-loading-data: Loading data with the `readr` package
-- @sec-dplyr: Using the `dplyr` package to look at the `asean_data`
+-   @sec-intro-R-RStudio: Introduction to R (work through Sections 2.3 to 2.12; come back and read Sections 2.1 and 2.2 later if you prefer)
+-   @sec-loading-data: Loading data with the `readr` package
+-   @sec-dplyr: Using the `dplyr` package to look at the `asean_data`
 
-After that, if you have time, you can continue with 
+After that, if you have time, you can continue with
 
-- @sec-plotting: Plotting data with the `ggplot2` package
+-   @sec-plotting: Plotting data with the `ggplot2` package
 
-or you can jump to 
+or you can jump to
 
-- @sec-stats: Some more statistical tests with the big Gapminder dataset
+-   @sec-stats: Some more statistical tests with the big Gapminder dataset
 
 If you have your own data in a CSV file, try loading it as in @sec-loading-data.
 
 Please take your time: try making some changes to the R commands here, and see what happens.
-
-
 
 # Introduction to R and RStudio {#sec-intro-R-RStudio}
 
@@ -103,8 +103,6 @@ Lots of people say that R takes *time* to learn: it will take you longer to work
 > “Make that time. Set it aside as an investment: for saving time later, and for building skills that can be used across multiple problems we face as scientists.”
 
 R is *not* designed for doing algebra and solving equations, or for plotting graphs. Other tools are better for these things, such as the commercial software Matlab and Mathematica and the free website [Desmos](https://www.desmos.com/calculator).
-
-
 
 ## Overview
 
@@ -603,14 +601,15 @@ install.packages("ggplot2")
 ```
 :::
 
-As well as adding functions to R, many packages include interesting datasets to play with. For example: 
+As well as adding functions to R, many packages include interesting datasets to play with. For example:
 
-* The package [nycflights](https://CRAN.R-project.org/package=nycflights13) includes data for all flights that departed from New York City in 2013.
+-   The package [nycflights](https://CRAN.R-project.org/package=nycflights13) includes data for all flights that departed from New York City in 2013.
 
-* The package [gapminder](https://CRAN.R-project.org/package=gapminder) includes an older version of the Gapminder data that we use in these notes (up to 2007).
+-   The package [gapminder](https://CRAN.R-project.org/package=gapminder) includes an older version of the Gapminder data that we use in these notes (up to 2007).
 
-* The book [R for Non-Programmers](https://bookdown.org/daniel_dauber_io/r4np_book/) has a companion package `r4np` with all the datasets used in the book. This package is not yet available in CRAN, so you need to follow slightly different instructions to install it. The instructions are included in the book [here](https://bookdown.org/daniel_dauber_io/r4np_book/r-basics-the-very-fundamentals.html#installing-packages-using-a-function).
+-   The book [R for Non-Programmers](https://bookdown.org/daniel_dauber_io/r4np_book/) has a companion package `r4np` with all the datasets used in the book. This package is not yet available in CRAN, so you need to follow slightly different instructions to install it. The instructions are included in the book [here](https://bookdown.org/daniel_dauber_io/r4np_book/r-basics-the-very-fundamentals.html#installing-packages-using-a-function).
 
+There is huge list of packages with datasets at <https://vincentarelbundock.github.io/Rdatasets/datasets.html>.
 
 # Working with data
 
@@ -671,13 +670,12 @@ Yet another way to look at the data is to type the name of the dataset in the Co
 #| class-output: output
 asean_data
 ```
+
 ::: {.callout-caution appearance="minimal"}
 ## Exercise
 
 If you have your own data in a CSV file, trying loading it using the `read_csv()` command. Then try adapting some of the commands below to apply them to your data.
-
 :::
-
 
 ### Method 2: Download the data directly into R from the internet
 
@@ -987,26 +985,31 @@ ggplot(life_exp_table, aes(x=country, y=le_change)) +
 We can also do a paired t-test, to test the hypothesis that average life expectancy has increased from 2012 to 2022 across the 10 ASEAN countries. Here are 3 methods to do this test: they all give the same result.
 
 #### Method 1: Compare life expectancies in 2022 and 2012 using the `t.test()` function
+
 ```{r}
 #| class-output: output
 t.test(life_exp_table$le2022, life_exp_table$le2012, paired = T)
 ```
 
 #### Method 2: Look at changes in life expectancy
+
 ```{r}
 #| class-output: output
 t.test(life_exp_table$le_change)
 ```
 
 #### Method 3: run a simple linear regression model with the `lm()` function
+
 ```{r}
 #| class-output: output
 regression_model <- lm(le_change ~ 1, data = life_exp_table)
 summary(regression_model)
 ```
+
 `lm()` is the R function to linear regression. The paired t-test is equivalent to a simple linear regression model, with only a constant term in the model.
 
 #### Alternative method: give greater weight to larger countries
+
 The paired t-test above treats all 10 countries equally. In some contexts, it might be more appropriate to give greater weight to the countries with larger populations:
 
 ```{r}
@@ -1015,7 +1018,6 @@ weighted_regression_model <- lm(le_change ~ 1, weights = pop2022,
                                 data = life_exp_table)
 summary(weighted_regression_model)
 ```
-
 
 ### Line graphs showing changes in a variable over time {#sec-line-graphs}
 
@@ -1190,15 +1192,18 @@ fig
 
 ## Some more statistical tests with the big Gapminder dataset {#sec-stats}
 
-To work through this section, you need to run the first two R commands in  @sec-line-graphs to create the data frames `big_gapminder_dataset` and `lifeExp_since_1900`.
+To work through this section, you need to run the first two R commands in @sec-line-graphs to create the data frames `big_gapminder_dataset` and `lifeExp_since_1900`.
 
 ### Unpaired t-test
+
 In this [talk](https://www.ted.com/talks/hans_rosling_the_best_stats_you_ve_ever_seen/transcript?subtitle=en) given in 2006, Hans Rosling argues that undergraduate students in Sweden had "preconceived ideas" about global health. They mistakenly thought that there were very big differences in life expectancy between the "Western world" and rest of the world. Rosling shows that, while there was some truth to this in the 1960s, it was no longer the case in the 2006 (and is no longer the case now).
 
 Let's look at this with the Gapminder dataset: use unpaired t-tests to compare life expectancy in 1962 and 2022 between the ASEAN countries and the 10 biggest European countries (countries with population greater than 18 million in 2022).
 
 #### Step 1
-Find the 10 biggest European countries with population greater than 18 million in 2022. To do this, we need the `big_gapminder_dataset` loaded in Section 
+
+Find the 10 biggest European countries with population greater than 18 million in 2022. To do this, we need the `big_gapminder_dataset` loaded in Section
+
 ```{r}
 #| class-output: output
 
@@ -1213,7 +1218,9 @@ europe_big %>%
 ```
 
 #### Step 2
+
 Make a dataset that just includes these countries and the ASEAN countries, and only includes data for 1962 and 2022. Create a column `group` that is "ASEAN" for the ASEAN countries and "Europe" for the European countries
+
 ```{r}
 #| class-output: output
 asean_and_europe <- lifeExp_since_1900 %>%
@@ -1224,7 +1231,9 @@ asean_and_europe
 ```
 
 #### Step 3
+
 Make a dataset just with the 1962 data, and arrange the countries in order of life expectancy.
+
 ```{r}
 #| class-output: output
 life_exp_1962 <- asean_and_europe %>%
@@ -1234,7 +1243,9 @@ life_exp_1962
 ```
 
 #### Step 4
+
 Make a scatterplot of the 1962 life expectancy data, using the x-axis to separate the ASEAN countries and European countries:
+
 ```{r}
 #| class-output: output
 plot_1962 <- life_exp_1962 %>%
@@ -1244,7 +1255,9 @@ plot_1962
 ```
 
 #### Step 5
+
 Add some country names:
+
 ```{r}
 #| class-output: output
 # Make a vector of distances to shift the country names left and right
@@ -1260,6 +1273,7 @@ plot_1962 +
 ```
 
 #### Step 6
+
 Use an unpaired t-test to test the hypothesis that life expectancy in 1962 was higher in the European countries than the ASEAN countries:
 
 ```{r}
@@ -1268,6 +1282,7 @@ t.test(lifeExp ~ group, data = life_exp_1962)
 ```
 
 #### Repeat the same steps with 2022 life expectancy data
+
 ```{r}
 #| class-output: output
 lifeExp_2022 <- asean_and_europe %>% 
@@ -1282,6 +1297,7 @@ lifeExp_2022 %>%
 
 t.test(lifeExp ~ group, data = lifeExp_2022)
 ```
+
 ### Chi-square test
 
 Here are commands to make a two-by-two table showing numbers of countries in Asia and Europe with life expectancies above and below 60 in 1962.
@@ -1298,20 +1314,21 @@ tab_1962
 ```
 
 Once we have created the table, we can use the `chi.sq()` command to run a chi-square test:
+
 ```{r}
 #| class-output: output
 chisq.test(tab_1962)
 ```
-The small p-value indicates that, in 1962, there was a significant difference between 
 
-- the proportion of Asian countries with life expectancy less than 60 ($\frac{34}{34+25} = 58\%$), and 
-- the proportion of European countries with life expectancy less than 60 ($\frac{5}{5+43} = 10\%$).
+The small p-value indicates that, in 1962, there was a significant difference between
+
+-   the proportion of Asian countries with life expectancy less than 60 ($\frac{34}{34+25} = 58\%$), and
+-   the proportion of European countries with life expectancy less than 60 ($\frac{5}{5+43} = 10\%$).
 
 ::: {.callout-caution appearance="minimal"}
 ## Exercise
 
 Modify the code above to make a table showing numbers of Asian and European countries with life expectancy above and below 75. Then run a chi-square test to assess the signficance of the difference in proportions.
-
 :::
 
 ::: {.callout-note appearance="minimal" collapse="true"}
@@ -1330,7 +1347,6 @@ tab_2022
 chisq.test(tab_2022)
 ```
 :::
-
 
 # Further reading
 
